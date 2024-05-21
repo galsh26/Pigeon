@@ -1,9 +1,10 @@
+from fastapi import FastAPI
 import requests
 from bs4 import BeautifulSoup
 import spacy
 
+# Load spaCy model
 nlp = spacy.load("en_core_web_sm")
-
 # Define custom stop words including website-specific elements
 stop_words = nlp.Defaults.stop_words | {"menu", "saved"}
 
@@ -35,33 +36,17 @@ def extract_keywords(text, num_keywords=5):
     
     return [keyword[0] for keyword in sorted_keywords[:num_keywords]]
 
+app = FastAPI()
 
-def main():
-    # website_link = input("Enter the URL of the webpage: ")
-    website_link = "https://www.delish.com/cooking/recipe-ideas/g129/rice-recipes/"
-    html_content = fetch_html(website_link)
-
+@app.get("/keywords/")
+async def get_keywords(url: str):
+    html_content = fetch_html(url)
     if html_content:
-        # Parse HTML using BeautifulSoup
-        soup = BeautifulSoup(html_content, 'html.parser')
-        
-        # Extract page title
-        page_title = soup.title.string if soup.title else ""
-        
-        # Extract meta description
-        meta_tags = soup.find_all("meta", attrs={"name": "description"})
-        meta_description = meta_tags[0]['content'] if meta_tags else ""
-        
-        # Combine title and meta description for keyword extraction
-        text_to_analyze = page_title + " " + meta_description
-        
-        # Extract keywords
-        keywords = extract_keywords(text_to_analyze)
-        print(f"Top {len(keywords)} keywords from the website:")
-        for keyword in keywords:
-            print(keyword)
+        soup = BeautifulSoup(html_content, "html.parser")
+        # Extract text content from HTML
+        text = soup.get_text()
+        # Extract keywords using spaCy
+        keywords = extract_keywords(text)
+        return {"keywords": keywords}
     else:
-        print("Failed to fetch HTML content.")
-
-if __name__ == "__main__":
-    main()
+        return {"keywords": []}
