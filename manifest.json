@@ -1,18 +1,19 @@
 {
-    "manifest_version": 3,
-    "name": "Pigeon",
-    "version": "1.0",
-    "description": "Extension that helps you keep your favorites organized",
-    "action": {
-      "default_icon": "Pigeon.png",
-      "default_popup": "popup.html"
-    },
-    "permissions": [
-      "activeTab",
-      "bookmarks"
-    ],
-    "icons": {
-      "48": "Pigeon.png"
-    }
+  "manifest_version": 3,
+  "name": "Pigeon",
+  "version": "1.0",
+  "description": "Extension that helps you keep your favorites organized",
+  "action": {
+    "default_icon": "Pigeon.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "activeTab",
+    "bookmarks",
+    "scripting",
+    "tabs"
+  ],
+  "icons": {
+    "48": "Pigeon.png"
   }
-  
+}
