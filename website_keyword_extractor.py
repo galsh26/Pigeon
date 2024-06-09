@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import requests
 from bs4 import BeautifulSoup
 import spacy
@@ -38,10 +39,19 @@ def extract_keywords(text, num_keywords=5):
 
 app = FastAPI()
 
+# Add CORS middleware to allow requests from the extension
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Adjust this to specify allowed origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.get("/keywords/")
 async def get_keywords(url: str):
     html_content = fetch_html(url)
-    if html_content:
+    if (html_content):
         soup = BeautifulSoup(html_content, "html.parser")
         # Extract text content from HTML
         text = soup.get_text()

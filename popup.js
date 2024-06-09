@@ -81,10 +81,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to fetch keywords from FastAPI service
     async function fetchKeywords(url) {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/keywords/?url=${encodeURIComponent(url)}`, {
-                mode: 'no-cors'
-            });
+            const response = await fetch(`http://127.0.0.1:8000/keywords/?url=${encodeURIComponent(url)}`);
             const data = await response.json();
+            console.log(url)
+            console.log(data.keywords);
             return data.keywords;
         } catch (error) {
             console.error('Error fetching keywords:', error);
