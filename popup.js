@@ -66,16 +66,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
     approveButton.addEventListener('click', function () {
         const selectedName = favoriteNameInput.value;
-        const selectedFolders = Array.from(manualSelect.options).filter(option => option.selected).map(option => option.text);
+        const selectedFolders = Array.from(favoritesList.options).filter(option => option.selected).map(option => option.text);
 
-        // Need to add the rest of the options
+        // Fetch bookmarks and sort based on the selected option
+        chrome.bookmarks.getTree(function (bookmarkTreeNodes) {
+            let bookmarks = flattenBookmarks(bookmarkTreeNodes);
+            const sortByOption = sortOptions.value;
+
+            if (sortByOption) {
+                bookmarks = sortBy(bookmarks, sortByOption);
+                updateBookmarksOrder(bookmarks);
+            }
+        });
     });
 
     cancelButton.addEventListener('click', function () {
         favoriteNameInput.value = '';
-        manualSelect.selectedIndex = -1;
+        favoritesList.selectedIndex = -1;
         
-        // Need to add the rest of the options
+        // Clear the rest of the options if necessary
     });
 
     // Function to fetch keywords from FastAPI service
@@ -137,15 +146,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 break;
             case 'name':
                 console.log('Sort by Name option selected');
-                sortBy('name');
                 break;
             case 'date':
                 console.log('Sort by Date option selected');
-                sortBy('date');
                 break;
             case 'links':
                 console.log('Sort by Number of Links option selected');
-                sortBy('links');
                 break;
             default:
                 console.log('Unexpected value selected');
@@ -154,7 +160,52 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Function to handle sorting based on selected option
-    function sortBy(option) {
-        // Need to implement the sorting logic here
+    function sortBy(bookmarks, option) {
+        if (option === 'links') {
+            const folders = bookmarks.filter(b => b.children);
+            const links = bookmarks.filter(b => !b.children);
+
+            // Sort folders by the number of links they contain
+            folders.sort((a, b) => (b.children.length - a.children.length));
+
+            return [...folders, ...links];
+        } else {
+            switch(option) {
+                case 'name':
+                    return bookmarks.sort((a, b) => a.title.localeCompare(b.title));
+                case 'date':
+                    return bookmarks.sort((a, b) => new Date(a.dateAdded) - new Date(b.dateAdded));
+                default:
+                    return bookmarks;
+            }
+        }
+    }
+
+    // Function to flatten bookmarks tree into a list
+    function flattenBookmarks(bookmarkTree) {
+        const bookmarks = [];
+
+        function traverse(node) {
+            if (node.url) {
+                bookmarks.push(node);
+            }
+            if (node.children) {
+                bookmarks.push(node);
+                node.children.forEach(child => traverse(child));
+            }
+        }
+
+        bookmarkTree.forEach(root => {
+            traverse(root);
+        });
+
+        return bookmarks;
+    }
+
+    // Function to update the order of bookmarks in Chrome
+    function updateBookmarksOrder(bookmarks) {
+        bookmarks.forEach((bookmark, index) => {
+            chrome.bookmarks.move(bookmark.id, { index: index });
+        });
     }
 });
