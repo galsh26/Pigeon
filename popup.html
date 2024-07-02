@@ -8,7 +8,26 @@
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <div class="container">
+  <div id="login-screen" class="container-vertical">
+    <img src="Pigeon.png" alt="Pigeon Logo" class="logo">
+    <h2 class="h4">Login</h2>
+    <div class="mb-3">
+      <label for="username" class="form-label">Username</label>
+      <input type="text" class="form-control" id="username">
+    </div>
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" class="form-control" id="email">
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Password</label>
+      <input type="password" class="form-control" id="password">
+    </div>
+    <button id="login-button" class="btn btn-primary">Login</button>
+  </div>
+  <div id="main-screen" class="container" style="display:none;">
+    <!-- Existing content -->
+  <div class="container-horizontal">
     <div class="left-panel">
       <h2 class="h4">Enter key words (separated by comma):</h2>
       <input type="text" class=".wider-select" id="searchInput">
@@ -38,6 +57,7 @@
       
       <h2 class="h4">Select manually</h2>
       <select id="favorites-list" class=".wider-select">
+        <option value="all">All Bookmarks</option>
       </select>
 
     </div>

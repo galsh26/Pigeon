@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const loginButton = document.getElementById('login-button');
+    const loginScreen = document.getElementById('login-screen');
+    const mainScreen = document.getElementById('main-screen');
     const approveButton = document.getElementById('approve-button');
     const cancelButton = document.getElementById('cancel-button');
     const otherSavedAsList = document.getElementById('other-saved-as');
@@ -7,7 +10,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const favoriteNameInput = document.getElementById('favorite-name');
     const favoritesList = document.getElementById('favorites-list');
 
-    // Function to populate the options and folders dynamically
+    loginButton.addEventListener('click', function () {
+        // Perform login validation here
+        // For now, we'll just switch screens
+        loginScreen.style.display = 'none';
+        mainScreen.style.display = 'block';
+    });
+
+    // Rest of the existing JavaScript logic
     function populateOptions(bookmarkTree) {
         const otherOptions = ['Option 1', 'Option 2', 'Option 3'];
         const folderOptions = extractFolderNames(bookmarkTree);
@@ -35,7 +45,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Function to extract folder names from the bookmark tree
     function extractFolderNames(bookmarkTree) {
         const folders = [];
 
@@ -57,42 +66,65 @@ document.addEventListener('DOMContentLoaded', function () {
         return folders;
     }
 
-    // Function to fetch user's bookmarks
     function fetchBookmarks() {
         chrome.bookmarks.getTree(function (bookmarkTreeNodes) {
             populateOptions(bookmarkTreeNodes);
         });
     }
 
-    approveButton.addEventListener('click', function () {
-        const selectedName = favoriteNameInput.value;
+    approveButton.addEventListener('click', async function () {
+        const selectedName = favoriteNameInput.value.trim();
+        const selectedKeywords = Array.from(relevantFoldersList.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.parentElement.textContent.trim());
         const selectedFolders = Array.from(favoritesList.options).filter(option => option.selected).map(option => option.text);
 
-        // Fetch bookmarks and sort based on the selected option
-        chrome.bookmarks.getTree(function (bookmarkTreeNodes) {
-            let bookmarks = flattenBookmarks(bookmarkTreeNodes);
-            const sortByOption = sortOptions.value;
-
-            if (sortByOption) {
-                bookmarks = sortBy(bookmarks, sortByOption);
-                updateBookmarksOrder(bookmarks);
-            }
+        const url = await new Promise((resolve, reject) => {
+            chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+                if (tabs[0]) {
+                    resolve(tabs[0].url);
+                } else {
+                    reject(new Error('No active tab found'));
+                }
+            });
         });
+
+        if (selectedName) {
+            for (const keyword of selectedKeywords) {
+                const folderId = await getOrCreateFolder(keyword);
+                await chrome.bookmarks.create({
+                    parentId: folderId,
+                    title: selectedName,
+                    url: url
+                });
+            }
+            alert(`Bookmark saved in folders: ${selectedKeywords.join(', ')}`);
+        }
+
+        if (sortOptions.value) {
+            chrome.bookmarks.getTree(function (bookmarkTreeNodes) {
+                let bookmarks = flattenBookmarks(bookmarkTreeNodes);
+                const sortByOption = sortOptions.value;
+
+                if (sortByOption) {
+                    bookmarks = sortBy(bookmarks, sortByOption);
+                    updateBookmarksOrder(bookmarks);
+                }
+            });
+        }
+
+        window.close();
     });
 
     cancelButton.addEventListener('click', function () {
         favoriteNameInput.value = '';
         favoritesList.selectedIndex = -1;
-        
-        // Clear the rest of the options if necessary
+        window.close();
     });
 
-    // Function to fetch keywords from FastAPI service
     async function fetchKeywords(url) {
         try {
             const response = await fetch(`http://127.0.0.1:8000/keywords/?url=${encodeURIComponent(url)}`);
             const data = await response.json();
-            console.log(url)
+            console.log(url);
             console.log(data.keywords);
             return data.keywords;
         } catch (error) {
@@ -101,9 +133,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Function to display keywords with checkboxes
     function displayKeywords(keywords) {
-        relevantFoldersList.innerHTML = ''; // Clear existing list
+        relevantFoldersList.innerHTML = '';
         keywords.forEach(keyword => {
             const label = document.createElement('label');
             label.innerHTML = `<input type="checkbox"> ${keyword}`;
@@ -112,7 +143,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Automatically fetch and display keywords for the current URL
     async function getCurrentTabAndKeywords() {
         try {
             const url = await new Promise((resolve, reject) => {
@@ -131,15 +161,14 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
             console.error('Error getting current tab and keywords:', error);
         }
-    }      
+    }
 
     getCurrentTabAndKeywords();
     fetchBookmarks();
 
-    // Add event listener to detect changes in the selected sorting option
     sortOptions.addEventListener('change', function() {
         const selectedValue = sortOptions.value;
-        
+
         switch(selectedValue) {
             case '':
                 console.log('No sort option selected');
@@ -159,13 +188,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Function to handle sorting based on selected option
     function sortBy(bookmarks, option) {
         if (option === 'links') {
             const folders = bookmarks.filter(b => b.children);
             const links = bookmarks.filter(b => !b.children);
 
-            // Sort folders by the number of links they contain
             folders.sort((a, b) => (b.children.length - a.children.length));
 
             return [...folders, ...links];
@@ -181,7 +208,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Function to flatten bookmarks tree into a list
     function flattenBookmarks(bookmarkTree) {
         const bookmarks = [];
 
@@ -202,10 +228,23 @@ document.addEventListener('DOMContentLoaded', function () {
         return bookmarks;
     }
 
-    // Function to update the order of bookmarks in Chrome
     function updateBookmarksOrder(bookmarks) {
         bookmarks.forEach((bookmark, index) => {
             chrome.bookmarks.move(bookmark.id, { index: index });
+        });
+    }
+
+    async function getOrCreateFolder(folderName) {
+        return new Promise((resolve, reject) => {
+            chrome.bookmarks.search({ title: folderName }, function(results) {
+                if (results.length > 0 && results[0].url === undefined) {
+                    resolve(results[0].id);
+                } else {
+                    chrome.bookmarks.create({ title: folderName }, function(newFolder) {
+                        resolve(newFolder.id);
+                    });
+                }
+            });
         });
     }
 });
