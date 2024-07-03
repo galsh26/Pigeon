@@ -11,13 +11,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const favoritesList = document.getElementById('favorites-list');
 
     loginButton.addEventListener('click', function () {
-        // Perform login validation here
-        // For now, we'll just switch screens
         loginScreen.style.display = 'none';
         mainScreen.style.display = 'block';
     });
 
-    // Rest of the existing JavaScript logic
     function populateOptions(bookmarkTree) {
         const otherOptions = ['Option 1', 'Option 2', 'Option 3'];
         const folderOptions = extractFolderNames(bookmarkTree);
@@ -43,6 +40,10 @@ document.addEventListener('DOMContentLoaded', function () {
             option.textContent = folder;
             favoritesList.appendChild(option);
         });
+
+        const allBookmarksOption = document.createElement('option');
+        allBookmarksOption.textContent = 'All Bookmarks';
+        favoritesList.appendChild(allBookmarksOption);
     }
 
     function extractFolderNames(bookmarkTree) {
@@ -75,8 +76,8 @@ document.addEventListener('DOMContentLoaded', function () {
     approveButton.addEventListener('click', async function () {
         const selectedName = favoriteNameInput.value.trim();
         const selectedKeywords = Array.from(relevantFoldersList.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.parentElement.textContent.trim());
-        const selectedFolders = Array.from(favoritesList.options).filter(option => option.selected).map(option => option.text);
-
+        const selectedFolder = favoritesList.options[favoritesList.selectedIndex].textContent;
+    
         const url = await new Promise((resolve, reject) => {
             chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
                 if (tabs[0]) {
@@ -86,33 +87,36 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
         });
-
-        if (selectedName) {
-            for (const keyword of selectedKeywords) {
-                const folderId = await getOrCreateFolder(keyword);
-                await chrome.bookmarks.create({
-                    parentId: folderId,
-                    title: selectedName,
-                    url: url
-                });
-            }
-            alert(`Bookmark saved in folders: ${selectedKeywords.join(', ')}`);
-        }
-
-        if (sortOptions.value) {
-            chrome.bookmarks.getTree(function (bookmarkTreeNodes) {
-                let bookmarks = flattenBookmarks(bookmarkTreeNodes);
-                const sortByOption = sortOptions.value;
-
-                if (sortByOption) {
-                    bookmarks = sortBy(bookmarks, sortByOption);
-                    updateBookmarksOrder(bookmarks);
+    
+        if (selectedName && selectedKeywords.length > 0) {
+            if (selectedFolder === 'All Bookmarks') {
+                for (const keyword of selectedKeywords) {
+                    const folderId = await getOrCreateFolder(keyword);
+                    await chrome.bookmarks.create({
+                        parentId: folderId,
+                        title: selectedName,
+                        url: url
+                    });
                 }
-            });
+                alert(`Bookmark saved in folders: ${selectedKeywords.join(', ')} under All Bookmarks`);
+            } else {
+                const parentFolderId = await getOrCreateFolder(selectedFolder);
+                for (const keyword of selectedKeywords) {
+                    const folderId = await getOrCreateSubFolder(parentFolderId, keyword);
+                    await chrome.bookmarks.create({
+                        parentId: folderId,
+                        title: selectedName,
+                        url: url
+                    });
+                }
+                alert(`Bookmark saved in folders: ${selectedKeywords.join(', ')} under ${selectedFolder}`);
+            }
+        } else {
+            alert('Please select a folder, a keyword, and enter a favorite name.');
         }
-
+    
         window.close();
-    });
+    });    
 
     cancelButton.addEventListener('click', function () {
         favoriteNameInput.value = '';
@@ -241,6 +245,21 @@ document.addEventListener('DOMContentLoaded', function () {
                     resolve(results[0].id);
                 } else {
                     chrome.bookmarks.create({ title: folderName }, function(newFolder) {
+                        resolve(newFolder.id);
+                    });
+                }
+            });
+        });
+    }
+
+    async function getOrCreateSubFolder(parentFolderId, folderName) {
+        return new Promise((resolve, reject) => {
+            chrome.bookmarks.getChildren(parentFolderId, function(results) {
+                const existingFolder = results.find(result => result.title === folderName && !result.url);
+                if (existingFolder) {
+                    resolve(existingFolder.id);
+                } else {
+                    chrome.bookmarks.create({ parentId: parentFolderId, title: folderName }, function(newFolder) {
                         resolve(newFolder.id);
                     });
                 }
