@@ -164,3 +164,13 @@ body {
   width: 100%;
   box-sizing: border-box;
 }
+
+.folder-arrow {
+  width: 0; 
+  height: 0; 
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid gray;
+  display: inline-block;
+  margin-right: 5px;
+}

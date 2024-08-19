@@ -140,15 +140,44 @@ document.addEventListener('DOMContentLoaded', function () {
     function flattenBookmarks(bookmarkTree) {
         const bookmarks = [];
 
-        function traverse(node) {
-            if (node.url) {
-                bookmarks.push(node);
+        function traverseBookmarks(node) {
+            const nodeTitle = node.title ? node.title.toLowerCase() : '';
+            const isFolder = !node.url;
+            let foundTermsInFolder = new Set(); // Keep track of terms found in the folder or websites inside it
+        
+            if (isFolder) {
+                // Check the folder name
+                searchTerms.forEach(term => {
+                    if (nodeTitle.includes(term)) {
+                        foundTermsInFolder.add(term);
+                    }
+                });
+        
+                // Check the websites inside the folder
+                if (node.children) {
+                    node.children.forEach(child => {
+                        const childTitle = child.title ? child.title.toLowerCase() : '';
+                        searchTerms.forEach(term => {
+                            if (childTitle.includes(term)) {
+                                foundTermsInFolder.add(term);
+                            }
+                        });
+                    });
+                }
+        
+                // If all terms are found (in the folder or inside it), add the folder to the results
+                if (searchTerms.every(term => foundTermsInFolder.has(term))) {
+                    folders.push(node);
+                }
+        
+                // Continue searching in subfolders
+                if (node.children) {
+                    node.children.forEach(child => traverseBookmarks(child));
+                }
+            } else if (searchWebsites && searchTerms.every(term => nodeTitle.includes(term))) {
+                websites.push(node);
             }
-            if (node.children) {
-                bookmarks.push(node);
-                node.children.forEach(child => traverse(child));
-            }
-        }
+        }           
 
         bookmarkTree.forEach(root => {
             traverse(root);
@@ -241,9 +270,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Existing functionality for populating options, sorting, etc.
     function populateOptions(bookmarkTree) {
+        // Clear the list before adding new folders
+        favoritesList.innerHTML = '';
+        otherSavedAsList.innerHTML = ''; // Clear the otherSavedAsList before adding new options
+        
         const otherOptions = ['Option 1', 'Option 2', 'Option 3'];
         const folderOptions = extractFolderNames(bookmarkTree);
-
+    
+        // Populate the "Other people saved it as:" list with only 3 options
         if (otherSavedAsList) {
             otherOptions.forEach(option => {
                 const label = document.createElement('label');
@@ -254,22 +288,18 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             console.error("otherSavedAsList element not found!");
         }
-
+    
+        // Populate the folders dropdown with folder names
         folderOptions.forEach(folder => {
-            const label = document.createElement('label');
-            label.innerHTML = `<input type="checkbox"> ${folder}`;
-            relevantFoldersList.appendChild(label);
-            relevantFoldersList.appendChild(document.createElement('br'));
-
             const option = document.createElement('option');
             option.textContent = folder;
             favoritesList.appendChild(option);
         });
-
+    
         const allBookmarksOption = document.createElement('option');
         allBookmarksOption.textContent = 'All Bookmarks';
         favoritesList.appendChild(allBookmarksOption);
-    }
+    }       
 
     function extractFolderNames(bookmarkTree) {
         const folders = [];
@@ -299,4 +329,116 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     fetchBookmarks();
+
+    // New code for search functionality
+    const searchButton = document.getElementById('search-button');
+    const searchInput = document.getElementById('searchInput');
+    const searchFolders = document.getElementById('searchFolders');
+    const searchWebsites = document.getElementById('searchWebsites');
+    const resultsList = document.getElementById('resultsList');
+
+    function searchBookmarks(keywords, searchFolders, searchWebsites) {
+        chrome.bookmarks.getTree(function (bookmarkTreeNodes) {
+            const folders = [];
+            const websites = [];
+            const searchTerms = keywords.map(keyword => keyword.trim().toLowerCase());
+
+            function traverseBookmarks(node) {
+                const nodeTitle = node.title ? node.title.toLowerCase() : '';
+                const isFolder = !node.url;
+                let matchesFolder = false;
+                let matchesInChildren = false;
+
+                if (isFolder) {
+                    matchesFolder = searchTerms.every(term => nodeTitle.includes(term));
+                    
+                    if (node.children) {
+                        matchesInChildren = node.children.some(child => 
+                            searchTerms.every(term => (child.title ? child.title.toLowerCase() : '').includes(term))
+                        );
+                    }
+
+                    if (searchFolders && (matchesFolder || matchesInChildren)) {
+                        folders.push(node);
+                    }
+
+                    if (node.children) {
+                        node.children.forEach(child => traverseBookmarks(child));
+                    }
+                } else if (searchWebsites && searchTerms.every(term => nodeTitle.includes(term))) {
+                    websites.push(node);
+                }
+            }
+
+            bookmarkTreeNodes.forEach(rootNode => traverseBookmarks(rootNode));
+
+            const results = [...folders, ...websites];
+            displaySearchResults(results);
+        });
+    }
+
+    function displaySearchResults(results) {
+        resultsList.innerHTML = '';
+
+        if (results.length === 0) {
+            resultsList.innerHTML = '<li class="list-group-item">No results found</li>';
+            return;
+        }
+
+        results.forEach(result => {
+            const listItem = document.createElement('li');
+            listItem.className = 'list-group-item';
+
+            if (result.url) {
+                // This is a website, add a clickable link
+                listItem.innerHTML = `<a href="${result.url}" target="_blank">${result.title || 'Untitled'}</a>`;
+            } else if (result.children) {
+                // This is a folder, add an option to open the folder and see the websites inside
+                listItem.textContent = result.title || 'Untitled';
+            
+                const arrow = document.createElement('span');
+                arrow.className = 'folder-arrow';
+                listItem.appendChild(arrow);  // The arrow is added after the folder name
+            
+                listItem.style.cursor = 'pointer';
+
+                listItem.addEventListener('click', function () {
+                    if (listItem.nextSibling && listItem.nextSibling.classList.contains('nested')) {
+                        // If the list is already open, close it
+                        listItem.parentNode.removeChild(listItem.nextSibling);
+                    } else {
+                        const nestedList = document.createElement('ul');
+                        nestedList.className = 'list-group nested';
+                        result.children.forEach(child => {
+                            const nestedItem = document.createElement('li');
+                            nestedItem.className = 'list-group-item';
+                            nestedItem.innerHTML = `<a href="${child.url}" target="_blank">${child.title || 'Untitled'}</a>`;
+                            nestedList.appendChild(nestedItem);
+                        });
+                        listItem.parentNode.insertBefore(nestedList, listItem.nextSibling);
+                    }
+                });
+            }
+
+            resultsList.appendChild(listItem);
+        });
+    }
+
+    searchButton.addEventListener('click', function () {
+        const keywords = searchInput.value.split(',');
+        if (keywords.length === 0) {
+            alert('Please enter at least one keyword.');
+            return;
+        }
+
+        const shouldSearchFolders = searchFolders.checked;
+        const shouldSearchWebsites = searchWebsites.checked;
+
+        if (!shouldSearchFolders && !shouldSearchWebsites) {
+            alert('Please select at least one option (Folders/Websites) to search.');
+            return;
+        }
+
+        searchBookmarks(keywords, shouldSearchFolders, shouldSearchWebsites);
+    });
 });
