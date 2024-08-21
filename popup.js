@@ -139,52 +139,33 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function flattenBookmarks(bookmarkTree) {
         const bookmarks = [];
-
+    
+        // Traverse function that will be used within flattenBookmarks
         function traverseBookmarks(node) {
             const nodeTitle = node.title ? node.title.toLowerCase() : '';
             const isFolder = !node.url;
-            let foundTermsInFolder = new Set(); // Keep track of terms found in the folder or websites inside it
-        
+    
             if (isFolder) {
-                // Check the folder name
-                searchTerms.forEach(term => {
-                    if (nodeTitle.includes(term)) {
-                        foundTermsInFolder.add(term);
-                    }
-                });
-        
-                // Check the websites inside the folder
-                if (node.children) {
-                    node.children.forEach(child => {
-                        const childTitle = child.title ? child.title.toLowerCase() : '';
-                        searchTerms.forEach(term => {
-                            if (childTitle.includes(term)) {
-                                foundTermsInFolder.add(term);
-                            }
-                        });
-                    });
-                }
-        
-                // If all terms are found (in the folder or inside it), add the folder to the results
-                if (searchTerms.every(term => foundTermsInFolder.has(term))) {
-                    folders.push(node);
-                }
-        
-                // Continue searching in subfolders
+                // Add the node (folder) to the bookmarks array
+                bookmarks.push(node);
+    
+                // Recursively traverse through child nodes
                 if (node.children) {
                     node.children.forEach(child => traverseBookmarks(child));
                 }
-            } else if (searchWebsites && searchTerms.every(term => nodeTitle.includes(term))) {
-                websites.push(node);
+            } else {
+                // If it's a bookmark (not a folder), add it to the bookmarks array
+                bookmarks.push(node);
             }
-        }           
-
+        }
+    
+        // Start traversing from the root nodes
         bookmarkTree.forEach(root => {
-            traverse(root);
+            traverseBookmarks(root);
         });
-
+    
         return bookmarks;
-    }
+    }    
 
     function updateBookmarksOrder(bookmarks) {
         bookmarks.forEach((bookmark, index) => {
@@ -342,26 +323,47 @@ document.addEventListener('DOMContentLoaded', function () {
             const folders = [];
             const websites = [];
             const searchTerms = keywords.map(keyword => keyword.trim().toLowerCase());
-
+    
             function traverseBookmarks(node) {
                 const nodeTitle = node.title ? node.title.toLowerCase() : '';
                 const isFolder = !node.url;
-                let matchesFolder = false;
-                let matchesInChildren = false;
-
+                let foundTermsInFolder = new Set(); // Keep track of found terms in the folder or its children
+                let matchedWebsites = [];
+    
                 if (isFolder) {
-                    matchesFolder = searchTerms.every(term => nodeTitle.includes(term));
-                    
+                    // Check if any of the search terms are found in the folder name
+                    searchTerms.forEach(term => {
+                        if (nodeTitle.includes(term)) {
+                            foundTermsInFolder.add(term);
+                        }
+                    });
+    
+                    // Check if any of the search terms are found in the children (websites) inside the folder
                     if (node.children) {
-                        matchesInChildren = node.children.some(child => 
-                            searchTerms.every(term => (child.title ? child.title.toLowerCase() : '').includes(term))
-                        );
+                        node.children.forEach(child => {
+                            const childTitle = child.title ? child.title.toLowerCase() : '';
+                            let childMatched = false;
+                            searchTerms.forEach(term => {
+                                if (childTitle.includes(term)) {
+                                    foundTermsInFolder.add(term);
+                                    childMatched = true;
+                                }
+                            });
+                            if (childMatched) {
+                                matchedWebsites.push(child); // Add matched website to the array
+                            }
+                        });
                     }
-
-                    if (searchFolders && (matchesFolder || matchesInChildren)) {
+    
+                    // If all search terms are found in either the folder or its children, add the folder to results
+                    if (searchTerms.every(term => foundTermsInFolder.has(term))) {
                         folders.push(node);
+    
+                        // Add all matched websites to the results
+                        websites.push(...matchedWebsites);
                     }
-
+    
+                    // Continue traversing the subfolders
                     if (node.children) {
                         node.children.forEach(child => traverseBookmarks(child));
                     }
@@ -369,47 +371,41 @@ document.addEventListener('DOMContentLoaded', function () {
                     websites.push(node);
                 }
             }
-
+    
             bookmarkTreeNodes.forEach(rootNode => traverseBookmarks(rootNode));
-
-            const results = [...folders, ...websites];
-            displaySearchResults(results);
+    
+            // Display results based on user's selection
+            displaySearchResults(folders, websites, searchFolders, searchWebsites);
         });
     }
-
-    function displaySearchResults(results) {
+    
+    function displaySearchResults(folders, websites, shouldDisplayFolders, shouldDisplayWebsites) {
         resultsList.innerHTML = '';
-
-        if (results.length === 0) {
-            resultsList.innerHTML = '<li class="list-group-item">No results found</li>';
+    
+        if (!shouldDisplayFolders && !shouldDisplayWebsites) {
+            resultsList.innerHTML = '<li class="list-group-item">Please select an option to display results.</li>';
             return;
         }
-
-        results.forEach(result => {
-            const listItem = document.createElement('li');
-            listItem.className = 'list-group-item';
-
-            if (result.url) {
-                // This is a website, add a clickable link
-                listItem.innerHTML = `<a href="${result.url}" target="_blank">${result.title || 'Untitled'}</a>`;
-            } else if (result.children) {
-                // This is a folder, add an option to open the folder and see the websites inside
-                listItem.textContent = result.title || 'Untitled';
+    
+        if (shouldDisplayFolders && folders.length > 0) {
+            folders.forEach(folder => {
+                const listItem = document.createElement('li');
+                listItem.className = 'list-group-item';
+                listItem.textContent = folder.title || 'Untitled';
             
                 const arrow = document.createElement('span');
                 arrow.className = 'folder-arrow';
-                listItem.appendChild(arrow);  // The arrow is added after the folder name
+                listItem.appendChild(arrow);
             
                 listItem.style.cursor = 'pointer';
-
+    
                 listItem.addEventListener('click', function () {
                     if (listItem.nextSibling && listItem.nextSibling.classList.contains('nested')) {
-                        // If the list is already open, close it
                         listItem.parentNode.removeChild(listItem.nextSibling);
                     } else {
                         const nestedList = document.createElement('ul');
                         nestedList.className = 'list-group nested';
-                        result.children.forEach(child => {
+                        folder.children.forEach(child => {
                             const nestedItem = document.createElement('li');
                             nestedItem.className = 'list-group-item';
                             nestedItem.innerHTML = `<a href="${child.url}" target="_blank">${child.title || 'Untitled'}</a>`;
@@ -418,27 +414,40 @@ document.addEventListener('DOMContentLoaded', function () {
                         listItem.parentNode.insertBefore(nestedList, listItem.nextSibling);
                     }
                 });
-            }
-
-            resultsList.appendChild(listItem);
-        });
+    
+                resultsList.appendChild(listItem);
+            });
+        }
+    
+        if (shouldDisplayWebsites && websites.length > 0) {
+            websites.forEach(website => {
+                const listItem = document.createElement('li');
+                listItem.className = 'list-group-item';
+                listItem.innerHTML = `<a href="${website.url}" target="_blank">${website.title || 'Untitled'}</a>`;
+                resultsList.appendChild(listItem);
+            });
+        }
+    
+        if (resultsList.innerHTML === '') {
+            resultsList.innerHTML = '<li class="list-group-item">No results found</li>';
+        }
     }
-
+    
     searchButton.addEventListener('click', function () {
         const keywords = searchInput.value.split(',');
         if (keywords.length === 0) {
             alert('Please enter at least one keyword.');
             return;
         }
-
+    
         const shouldSearchFolders = searchFolders.checked;
         const shouldSearchWebsites = searchWebsites.checked;
-
+    
         if (!shouldSearchFolders && !shouldSearchWebsites) {
             alert('Please select at least one option (Folders/Websites) to search.');
             return;
         }
-
+    
         searchBookmarks(keywords, shouldSearchFolders, shouldSearchWebsites);
-    });
+    });    
 });
