@@ -378,9 +378,37 @@ document.addEventListener('DOMContentLoaded', function () {
             displaySearchResults(folders, websites, searchFolders, searchWebsites);
         });
     }
+
+     // Function to fetch the summary
+    async function fetchSummary(url) {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/summary/?url=${encodeURIComponent(url)}`);
+            const data = await response.json();
+            return data.summary;
+        } catch (error) {
+            console.error('Error fetching summary:', error);
+            return "Error fetching summary.";
+        }
+    }
+
+    // Function to update summary when hovering over a link
+    async function updateSummaryOnHover(url) {
+        const summary = await fetchSummary(url);
+        const summaryContent = document.getElementById('summary-content');
+        
+        // Split the summary into sentences and wrap each sentence in a <p> tag
+        const sentences = summary.split('.').filter(sentence => sentence.trim() !== '');
+        const formattedSummary = sentences.map(sentence => `<p>${sentence.trim()}.</p>`).join('');
+        
+        // Update the summary content with the formatted summary
+        summaryContent.innerHTML = formattedSummary;
+    }
+
     
     function displaySearchResults(folders, websites, shouldDisplayFolders, shouldDisplayWebsites) {
         resultsList.innerHTML = '';
+    
+        const displayedTitles = new Set();  // Set to track displayed titles
     
         if (!shouldDisplayFolders && !shouldDisplayWebsites) {
             resultsList.innerHTML = '<li class="list-group-item">Please select an option to display results.</li>';
@@ -389,49 +417,69 @@ document.addEventListener('DOMContentLoaded', function () {
     
         if (shouldDisplayFolders && folders.length > 0) {
             folders.forEach(folder => {
-                const listItem = document.createElement('li');
-                listItem.className = 'list-group-item';
-                listItem.textContent = folder.title || 'Untitled';
-            
-                const arrow = document.createElement('span');
-                arrow.className = 'folder-arrow';
-                listItem.appendChild(arrow);
-            
-                listItem.style.cursor = 'pointer';
+                const title = folder.title || 'Untitled';
+                if (!displayedTitles.has(title)) {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'list-group-item';
+                    listItem.textContent = title;
     
-                listItem.addEventListener('click', function () {
-                    if (listItem.nextSibling && listItem.nextSibling.classList.contains('nested')) {
-                        listItem.parentNode.removeChild(listItem.nextSibling);
-                    } else {
-                        const nestedList = document.createElement('ul');
-                        nestedList.className = 'list-group nested';
-                        folder.children.forEach(child => {
-                            const nestedItem = document.createElement('li');
-                            nestedItem.className = 'list-group-item';
-                            nestedItem.innerHTML = `<a href="${child.url}" target="_blank">${child.title || 'Untitled'}</a>`;
-                            nestedList.appendChild(nestedItem);
-                        });
-                        listItem.parentNode.insertBefore(nestedList, listItem.nextSibling);
-                    }
-                });
+                    const arrow = document.createElement('span');
+                    arrow.className = 'folder-arrow';
+                    listItem.appendChild(arrow);
     
-                resultsList.appendChild(listItem);
+                    listItem.style.cursor = 'pointer';
+    
+                    listItem.addEventListener('click', function () {
+                        if (listItem.nextSibling && listItem.nextSibling.classList.contains('nested')) {
+                            listItem.parentNode.removeChild(listItem.nextSibling);
+                        } else {
+                            const nestedList = document.createElement('ul');
+                            nestedList.className = 'list-group nested';
+                            folder.children.forEach(child => {
+                                const nestedItem = document.createElement('li');
+                                nestedItem.className = 'list-group-item';
+                                nestedItem.innerHTML = `<a href="${child.url}" target="_blank">${child.title || 'Untitled'}</a>`;
+    
+                                // Add event listener to update summary on hover
+                                nestedItem.addEventListener('mouseover', function () {
+                                    updateSummaryOnHover(child.url);
+                                });
+    
+                                nestedList.appendChild(nestedItem);
+                            });
+                            listItem.parentNode.insertBefore(nestedList, listItem.nextSibling);
+                        }
+                    });
+    
+                    resultsList.appendChild(listItem);
+                    displayedTitles.add(title);  // Add title to the set to prevent duplicates
+                }
             });
         }
     
         if (shouldDisplayWebsites && websites.length > 0) {
             websites.forEach(website => {
-                const listItem = document.createElement('li');
-                listItem.className = 'list-group-item';
-                listItem.innerHTML = `<a href="${website.url}" target="_blank">${website.title || 'Untitled'}</a>`;
-                resultsList.appendChild(listItem);
+                const title = website.title || 'Untitled';
+                if (!displayedTitles.has(title)) {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'list-group-item';
+                    listItem.innerHTML = `<a href="${website.url}" target="_blank">${title}</a>`;
+    
+                    // Add event listener to update summary on hover
+                    listItem.addEventListener('mouseover', function () {
+                        updateSummaryOnHover(website.url);
+                    });
+    
+                    resultsList.appendChild(listItem);
+                    displayedTitles.add(title);  // Add title to the set to prevent duplicates
+                }
             });
         }
     
         if (resultsList.innerHTML === '') {
             resultsList.innerHTML = '<li class="list-group-item">No results found</li>';
         }
-    }
+    }        
     
     searchButton.addEventListener('click', function () {
         const keywords = searchInput.value.split(',');
