@@ -1,3 +1,5 @@
+const server_address = 'http://localhost:8000'
+
 document.addEventListener('DOMContentLoaded', function () {
     const loginButton = document.getElementById('login-button');
     const loginScreen = document.getElementById('login-screen');
@@ -104,6 +106,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value.trim();
         const rememberMe = document.getElementById('remember-me').checked;
+
+        const formData = new URLSearchParams();
+        formData.append('username', email);
+        formData.append('password', password);
+        formData.append('grant_type', 'password');
     
         if (!email || !password) {
             alert('Please fill out both email and password fields.');
@@ -111,10 +118,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     
         try {
-            const response = await fetch('http://localhost:8000/auth/login', {
+            
+            const response = await fetch(`${server_address}/token`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: email, password: password })
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData
             });
     
             if (response.ok) {
