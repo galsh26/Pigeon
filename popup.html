@@ -8,13 +8,10 @@
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
+  <!-- Login Screen -->
   <div id="login-screen" class="container-vertical">
     <img src="Pigeon.png" alt="Pigeon Logo" class="logo">
     <h2 class="h4">Login</h2>
-    <div class="mb-3">
-      <label for="username" class="form-label">Username</label>
-      <input type="text" class="form-control" id="username">
-    </div>
     <div class="mb-3">
       <label for="email" class="form-label">Email</label>
       <input type="email" class="form-control" id="email">
@@ -23,7 +20,31 @@
       <label for="password" class="form-label">Password</label>
       <input type="password" class="form-control" id="password">
     </div>
+    <div class="mb-3 form-check">
+      <input type="checkbox" class="form-check-input" id="remember-me">
+      <label class="form-check-label" for="remember-me">Remember Me</label>
+    </div>
     <button id="login-button" class="btn btn-primary">Login</button>
+    <button id="signup-button" class="btn btn-secondary">Sign Up</button>
+  </div>
+
+  <!-- Sign Up Screen -->
+  <div id="signup-screen" class="container-vertical" style="display: none;">
+    <h2 class="h4">Sign Up</h2>
+    <div class="mb-3">
+      <label for="signup-email" class="form-label">Email</label>
+      <input type="email" class="form-control" id="signup-email">
+    </div>
+    <div class="mb-3">
+      <label for="signup-password" class="form-label">Password</label>
+      <input type="password" class="form-control" id="signup-password">
+    </div>
+    <div class="mb-3">
+      <label for="signup-confirm-password" class="form-label">Confirm Password</label>
+      <input type="password" class="form-control" id="signup-confirm-password">
+    </div>
+    <button id="approve-button" class="btn btn-success">Approve</button>
+    <button id="back-to-login" class="btn btn-secondary">Back to Login</button>
   </div>
 
   <!-- Main Screen -->

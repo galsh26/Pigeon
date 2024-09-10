@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const loginButton = document.getElementById('login-button');
     const loginScreen = document.getElementById('login-screen');
+    const signupScreen = document.getElementById('signup-screen');
     const mainScreen = document.getElementById('main-screen');
     const saveScreen = document.getElementById('save-screen');
     const sortScreen = document.getElementById('sort-screen');
@@ -11,6 +12,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const saveApproveButton = document.getElementById('save-approve-button');
     const saveCancelButton = document.getElementById('save-cancel-button');
     
+    const signupButton = document.getElementById('signup-button');
+    const approveButton = document.getElementById('approve-button');
+    const backToLoginButton = document.getElementById('back-to-login');
+    
     const sortApproveButton = document.getElementById('sort-approve-button');
     const sortCancelButton = document.getElementById('sort-cancel-button');
 
@@ -20,10 +25,127 @@ document.addEventListener('DOMContentLoaded', function () {
     const favoriteNameInput = document.getElementById('favorite-name');
     const favoritesList = document.getElementById('favorites-list');
 
-    loginButton.addEventListener('click', function () {
+    const rememberMeCheckbox = document.getElementById('remember-me');
+
+    function applyInputStyles() {
+        const inputs = document.querySelectorAll('input[type="email"], input[type="password"]');
+        inputs.forEach(input => {
+            input.style.width = "80%";
+            input.style.maxWidth = "300px";
+            input.style.margin = "0 auto";
+            input.style.display = "block";
+        });
+    }
+
+    // Switch to Sign Up screen
+    signupButton.addEventListener('click', function () {
         loginScreen.style.display = 'none';
-        mainScreen.style.display = 'block';
+        signupScreen.style.display = 'block';
+        applyInputStyles();
     });
+
+    // Back to Login screen
+    backToLoginButton.addEventListener('click', function () {
+        signupScreen.style.display = 'none';
+        loginScreen.style.display = 'block';
+        applyInputStyles();
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        applyInputStyles();
+        const storedEmail = sessionStorage.getItem('userEmail');
+    
+        if (storedEmail) {
+            loginScreen.style.display = 'none';
+            mainScreen.style.display = 'block';
+        } else {
+            loginScreen.style.display = 'block';
+        }
+    });
+
+    // Approve registration and go back to login
+    document.getElementById('approve-button').addEventListener('click', async function() {
+        const email = document.getElementById('signup-email').value.trim();
+        const password = document.getElementById('signup-password').value.trim();
+        const confirmPassword = document.getElementById('signup-confirm-password').value.trim();
+    
+        if (!email || !password || !confirmPassword) {
+            alert('Please fill out all fields.');
+            return;
+        }
+    
+        if (password !== confirmPassword) {
+            alert('Passwords do not match!');
+            return;
+        }
+    
+        try {
+            const response = await fetch('http://localhost:8000/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email, password: password })
+            });
+    
+            if (response.ok) {
+                alert('Registration successful! Redirecting to login.');
+                signupScreen.style.display = 'none';
+                loginScreen.style.display = 'block';
+            } else {
+                const errorData = await response.json();
+                alert('Registration failed: ' + JSON.stringify(errorData));
+            }
+        } catch (error) {
+            console.error('Error during registration:', error);
+            alert('An error occurred. Please try again later.');
+        }
+    });    
+    
+    document.getElementById('login-button').addEventListener('click', async function() {
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const rememberMe = document.getElementById('remember-me').checked;
+    
+        if (!email || !password) {
+            alert('Please fill out both email and password fields.');
+            return;
+        }
+    
+        try {
+            const response = await fetch('http://localhost:8000/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: email, password: password })
+            });
+    
+            if (response.ok) {
+                const data = await response.json();
+                localStorage.setItem('accessToken', data.access_token);
+    
+                if (rememberMe) {
+                    sessionStorage.setItem('userEmail', email);
+                } else {
+                    sessionStorage.removeItem('userEmail');
+                }
+
+                alert('Login successful!');
+                loginScreen.style.display = 'none';
+                mainScreen.style.display = 'block';
+    
+            } else {
+                const errorData = await response.json();
+                alert('Login failed: ' + errorData.detail);
+            }
+        } catch (error) {
+            console.error('Error during login:', error);
+            alert('An error occurred. Please try again later.');
+        }
+    });    
+
+    // Check if the user is already logged in
+    if (sessionStorage.getItem('userEmail')) {
+        loginScreen.style.display = 'none';
+        // Show the main screen or whatever comes after login
+    }
 
     // Switch to Add to Favorites screen
     addFavoritesButton.addEventListener('click', function () {
@@ -51,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function fetchKeywords(url) {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/keywords/?url=${encodeURIComponent(url)}`);
+            const response = await fetch(`http://127.0.0.1:8001/keywords/?url=${encodeURIComponent(url)}`);
             const data = await response.json();
             console.log(url);
             console.log(data.keywords);
@@ -382,7 +504,7 @@ document.addEventListener('DOMContentLoaded', function () {
      // Function to fetch the summary
     async function fetchSummary(url) {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/summary/?url=${encodeURIComponent(url)}`);
+            const response = await fetch(`http://127.0.0.1:8001/summary/?url=${encodeURIComponent(url)}`);
             const data = await response.json();
             return data.summary;
         } catch (error) {

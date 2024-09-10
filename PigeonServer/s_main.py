@@ -17,9 +17,11 @@ import baseDbConnector
 import mongoDbConnector
 import Recommendation
 from normalize_url import url_normalize
+from auth import router as auth_router
 # endregion
 # region setup
 app = FastAPI()
+app.include_router(auth_router)
 
 # Allow all origins
 app.add_middleware(
