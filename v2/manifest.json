@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "My Chrome Extension",
+  "version": "1.0",
+  "description": "A Chrome extension with a login screen as the main menu.",
+  "action": {
+    "default_popup": "login_screen.html"
+  },
+  "permissions": ["activeTab", "scripting", "tabs"],
+  "icons": {
+    "16": "images/icon16.png",
+    "48": "images/icon48.png",
+    "128": "images/icon128.png"
+  },
+  "background": {
+    "service_worker": "main_page.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["main_page.js"],
+      "css": ["styles.css"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["create_tag.html","images/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
+

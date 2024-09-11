@@ -1,0 +1,63 @@
+body {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px;
+}
+.container {
+  display: flex;
+  gap: 20px;
+}
+#keywordList {
+  width: 200px;
+  height: 400px;
+  overflow-y: auto;
+  border: 1px solid #000;
+}
+#titleList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 600px;
+  height: 400px;
+  overflow-y: auto;
+  border: 1px solid #000;
+}
+.tile {
+  display: flex;
+  align-items: flex-start;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  padding: 10px;
+  transition: background-color 0.3s ease;
+}
+.tile:hover {
+  background-color: #f0f0f0;
+}
+.tile img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.tile-content {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px; /* Added margin to create space between image and content */
+}
+.tile h4 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+.tile p {
+  margin-top: 5px; /* Added margin to create space between title and description */
+  font-size: 14px;
+  color: #666;
+}
+button {
+  margin-top: 20px;
+  display: block;
+}
