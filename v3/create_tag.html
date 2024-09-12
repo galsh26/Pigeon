@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Tag</title>
+    <style>
+        .keyword-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+    
+        .keyword-item label {
+            margin-left: 5px;
+        }
+    
+        #keywordsContainer {
+            width: 200px;
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #000;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Create New Tag</h2>
+    
+    <div>
+        <label for="currentUrl">Current URL:</label>
+        <span id="currentUrl"></span>
+    </div>
+
+    <div>
+        <label for="tagName">Title:</label>
+        <input type="text" id="tagName">
+    </div>
+
+    <div class="screenshot-container">
+        <img id="screenshot" src="" alt="Screenshot" width="200" height="200">
+    </div>
+    <button id="captureBtn">Retake Screenshot</button>
+
+    <div>
+        <label for="description">Description:</label>
+        <textarea id="description"></textarea>
+        <div id="loadingDescription" style="display:none;">Loading description...</div>
+    </div>
+
+    <h3>Keywords</h3>
+    <div id="keywordsContainer"></div>
+    <div id="loadingKeywords" style="display:none;">Loading keywords...</div>
+    
+    <div>
+        <input type="text" id="newKeyword" placeholder="Add new keyword">
+        <button id="addKeywordBtn">+</button>
+    </div>
+
+    <button id="cancelBtn">Cancel</button>
+    <button id="addBtn">Add Tag</button>
+
+    <script src="create_tag.js"></script>
+</body>
+</html>
