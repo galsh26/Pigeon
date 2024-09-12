@@ -259,6 +259,7 @@ async def get_all_user_keywords(
 ):
     res = monConnector.get_all_user_keywords(uid)
     # remove duplicates
+    res = list(set(res))
     return res
 
 # endregion
