@@ -62,6 +62,7 @@ document.getElementById('login').addEventListener('submit', async function (e) {
 
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
+    const rememberMe = document.getElementById('remamber-me').value
 
     const formData = new URLSearchParams();
     formData.append('username', username);
@@ -78,6 +79,12 @@ document.getElementById('login').addEventListener('submit', async function (e) {
         if (response.ok) {
             const data = await response.json();
             saveToken(data.access_token);
+            // Save session based on Remember Me checkbox
+            if (rememberMe) {
+                sessionStorage.setItem('isLoggedIn', 'true');
+            } else {
+                sessionStorage.removeItem('isLoggedIn');
+            }
             showMessage('Logged in successfully!');
         } else {
             showMessage('Login failed', true);
@@ -87,6 +94,17 @@ document.getElementById('login').addEventListener('submit', async function (e) {
         showMessage('Login failed: ' + error.message, true);
     }
 });
+
+function checkLoginStatus() {
+    const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+    if (isLoggedIn === 'true') {
+        window.location.href = 'main_page.html';
+    } else {
+        clearToken();
+    }
+}
+
+window.onload = checkLoginStatus;
 
 // Logout button handler
 document.getElementById('logoutBtn').addEventListener('click', async function () {
