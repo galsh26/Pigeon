@@ -5,8 +5,10 @@ import en_core_web_sm
 import en_core_web_md
 
 import baseDbConnector
-from keyword_extraction import get_keywords as kw_from_url
-
+from keyword_extraction import get_keywords_for_url as kw_from_url, summarize_website, get_website_summary, \
+    extract_main_content_from_url
+from sklearn.decomposition import LatentDirichletAllocation
+from sklearn.feature_extraction.text import CountVectorizer
 
 nlp = spacy.load('en_core_web_md')
 en_core_web_sm.load()
@@ -62,4 +64,51 @@ def get_recommendations_by_url(url: str, num: int = 5):
     kw = kw_from_url(url)  # ["keywords"]
     if not kw:
         return False
-    return get_recommendations_by_keywords(kw["keywords"], num)
+    res = get_recommendations_by_keywords(kw["keywords"], num)
+    return res
+
+
+def generate_keywords_for_url(url: str, num: int = 5):
+    return kw_from_url(url, num)
+
+
+def gen_url_sum(url: str, num: int = 1):
+    return get_website_summary(url)
+
+
+def extract_topics(url, n_topics=2, n_top_words=10, random_state=0):
+    """
+    Extract topics from a web page's main content using LDA.
+
+    Parameters:
+    - url: URL of the web page to extract text from.
+    - n_topics: number of topics to extract (default is 2).
+    - n_top_words: number of top words to display for each topic (default is 10).
+    - random_state: random state for reproducibility (default is 0).
+
+    Returns:
+    - topics: A list of topics with their top words.
+    """
+
+    # Assuming this function extracts and returns the main text from the URL
+    txt = gen_url_sum(url, num=1)
+
+    # Vectorize the input text (convert text to token counts)
+    # Wrap the extracted text in a list to make it iterable
+    vectorizer = CountVectorizer(stop_words='english')
+    X = vectorizer.fit_transform([txt])
+
+    # Fit LDA model to the vectorized text
+    lda = LatentDirichletAllocation(n_components=n_topics, random_state=random_state)
+    lda.fit(X)
+
+    # Get feature names (words)
+    feature_names = vectorizer.get_feature_names_out()
+
+    # Extract and display the topics
+    topics = []
+    for index, topic in enumerate(lda.components_):
+        top_words = [feature_names[i] for i in topic.argsort()[:-n_top_words - 1:-1]]
+        topics.append(f"Topic #{index + 1}: {', '.join(top_words)}")
+
+    return topics

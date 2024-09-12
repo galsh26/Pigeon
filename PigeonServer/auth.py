@@ -3,36 +3,17 @@ import jwt
 from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status, APIRouter
 from fastapi.security import OAuth2PasswordBearer
-from pydantic import BaseModel
-
-import baseDbConnector
-import mongoDbConnector
 
 router = APIRouter(
     prefix="/auth",
     tags=["auth"],
 )
 
-class UserRegister(BaseModel):
-    email: str
-    password: str
-
 SECRET_KEY = "Hippopotomonstrosesquippedaliophobia"
 ALGORITHM = "HS256"
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
-monConnector: baseDbConnector = mongoDbConnector.MongoDbConnector()
-monConnector.connect()
-
-@router.post("/register")
-async def register_user(user: UserRegister):
-    hashed_password = get_password_hash(user.password)
-    user_created = monConnector.register_user(user.email, "user", hashed_password)
-    
-    if not user_created:
-        raise HTTPException(status_code=400, detail="User already exists.")
-    return {"message": "User registered successfully"}
 
 def verify_password(plain_password, hashed_password):
     return bcrypt_context.verify(plain_password, hashed_password)

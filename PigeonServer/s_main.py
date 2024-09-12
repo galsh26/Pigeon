@@ -17,11 +17,10 @@ import baseDbConnector
 import mongoDbConnector
 import Recommendation
 from normalize_url import url_normalize
-from auth import router as auth_router
+
 # endregion
 # region setup
 app = FastAPI()
-app.include_router(auth_router)
 
 # Allow all origins
 app.add_middleware(
@@ -54,7 +53,7 @@ class TokenData(BaseModel):
 def generate_token(user_id):
     payload = {
         'user_id': user_id,
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, minutes=5),
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1, minutes=0),
         'iat': datetime.datetime.utcnow()
     }
     return jwt.encode(payload, SECRET_KEY, algorithm='HS256')
@@ -259,6 +258,7 @@ async def get_all_user_keywords(
         uid: str = Depends(verify_token)
 ):
     res = monConnector.get_all_user_keywords(uid)
+    # remove duplicates
     return res
 
 # endregion
@@ -325,6 +325,24 @@ async def recommend_by_url_non_user_related(url: str = None, num: int = 5):
             "description": r["description"]
         })
     return dtr
+
+
+@app.get("/generate-keywords-for-url")
+async def generate_keywords_for_url(url: str = None, num: int = 5):
+    res = Recommendation.generate_keywords_for_url(url, num)
+    # res2 = Recommendation.extract_topics(url, num)
+    # set res2 at the beginning of res["keywords"] and remove duplicates
+    # res["keywords"] = list(set(res2 + res["keywords"]))
+    return res
+
+
+@app.get("/generate-summarize-for-url")
+async def generate_summarize_for_website(url: str = None, sentences_num:int = 1):
+    res = Recommendation.gen_url_sum(url, sentences_num)
+    res = res.strip()
+    return {"summary": res}
+
+
 # endregion
 
 
