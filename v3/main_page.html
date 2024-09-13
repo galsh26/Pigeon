@@ -30,29 +30,33 @@
             border: 1px solid #000;
         }
         .tile {
-            display: flex;
+            display: flex; /* Align content horizontally */
             align-items: center;
+            justify-content: flex-start;
             border: 1px solid #ccc;
             border-radius: 8px;
-            overflow: hidden;
+            width: 100%; /* Take full width of the container */
             background-color: #f9f9f9;
-            cursor: pointer;
             padding: 10px;
+            cursor: pointer;
             transition: background-color 0.3s ease;
         }
+
         .tile:hover {
             background-color: #f0f0f0;
         }
         .tile img {
-            width: 100px;
-            height: 100px;
+            width: 150px;
+            height: 150px;
             object-fit: cover;
             border-radius: 8px;
         }
         .tile-content {
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
             margin-left: 15px;
+            flex-grow: 1; /* Let the content take the remaining space */
         }
         .tile h4 {
             margin: 0;
@@ -64,9 +68,61 @@
             font-size: 14px;
             color: #666;
         }
-        button {
-            margin-top: 20px;
+        #editUserButton {
+            width: auto;  /* Automatically size the button based on its content */
+            padding: 10px 20px;  /* Adjust padding for a smaller button */
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
             display: block;
+            margin: 10px;  /* Adjust margins to position it better */
+        }
+
+        #editUserButton:hover {
+            background-color: #0056b3;
+        }
+        #greeting {
+            background-color: #007BFF;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 300px; /* Limit the width */
+            height: min-content; /* Automatically adjust height */
+            display: inline-block; /* Shrink to fit the content */
+        }
+
+        .button {
+            padding: 8px 12px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button-group {
+            display: flex;
+            justify-content: flex-start; /* Align buttons to the left */
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .button-group button {
+            padding: 8px 12px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button-group button:hover {
+            background-color: #0056b3;
         }
         #dynamicContent {
             display: none;
@@ -74,7 +130,10 @@
     </style>
 </head>
 <body>
+    <div id="greeting"></div>
+
     <div id="mainContent">
+        <button id="editUserButton">Edit User</button>
         <div class="container">
             <!-- Keyword List -->
             <div>
@@ -95,7 +154,7 @@
 
         <!-- Buttons -->
         <button id="createTagButton">Create New Tag</button>
-        <button id="addTagButton">Add Tag</button>
+
         <button id="logoutButton">Logout</button>
     </div>
 
@@ -103,6 +162,5 @@
     <div id="dynamicContent" style="display:none;"></div>
 
     <script src="main_page.js"></script>
-    <script src="create_tag.js"></script>
 </body>
 </html>
