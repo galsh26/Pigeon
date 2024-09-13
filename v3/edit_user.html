@@ -4,30 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Update User Info</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Update User Information</h1>
+    <div id="updateUserFormContainer" class="container-vertical">
+        <h2>Update User Information</h2>
 
-    <div>
-        <p><strong>Email:</strong> <span id="email">Loading...</span></p>
-        <p><strong>Username:</strong> <span id="uname">Loading...</span></p>
+        <div>
+            <p><strong>Email:</strong> <span id="email">Loading...</span></p>
+            <p><strong>Username:</strong> <span id="uname">Loading...</span></p>
+        </div>
+
+        <form id="updateUserForm">
+            
+            <label for="n_uname">New Username (optional):</label><br>
+            <input type="text" id="n_uname" name="n_uname"><br><br>
+
+            <label for="cur_password">Current Password:</label><br>
+            <input type="password" id="cur_password" name="cur_password" required><br><br>
+
+            <label for="n_password">New Password (optional):</label><br>
+            <input type="password" id="n_password" name="n_password"><br><br>
+
+            <button type="submit">Update</button>
+        </form>
+    
+        <p id="result"></p>
     </div>
-
-    <form id="updateUserForm">
-        
-        <label for="n_uname">New Username (optional):</label><br>
-        <input type="text" id="n_uname" name="n_uname"><br><br>
-
-        <label for="cur_password">Current Password:</label><br>
-        <input type="password" id="cur_password" name="cur_password" required><br><br>
-
-        <label for="n_password">New Password (optional):</label><br>
-        <input type="password" id="n_password" name="n_password"><br><br>
-
-        <button type="submit">Update</button>
-    </form>
-
-    <p id="result"></p>
 
     <script src="edit_user.js"></script>
 </body>

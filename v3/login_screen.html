@@ -8,16 +8,21 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="loginForm">
+    <div id="loginForm" class="container-vertical">
         <h2>Login</h2>
         <form id="login">
             <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
+            <input type="text" id="username" class="form-control" name="username" required>
             <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
+            <input type="password" id="password" class="form-control" name="password" required>
             <button type="submit">Login</button>
         </form>
         <button id="registerBtn">Register</button>
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="remember-me">
+            <label class="form-check-label" for="remember-me">Remember Me</label>
+          </div>
+        <img src="Pigeon.png" alt="Pigeon Logo" class="logo">
     </div>
 
     <div id="logoutSection" style="display:none;">

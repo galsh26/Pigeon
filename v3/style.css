@@ -1,18 +1,281 @@
 body {
   display: flex;
-  justify-content: space-around;
-  margin: 20px;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  font-family: Arial, sans-serif;
 }
+
 .container {
   display: flex;
+  justify-content: space-between;
   gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  min-width: 800px;
+  max-height: 400px;
+  min-height: 300px;
 }
+
+.column {
+  float: left;
+  width: 48%;
+}
+
+.left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  margin-top: 0;
+}
+
+.right-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 20px;
+  align-items: center;
+  margin-top: 0;
+}
+
+.container-vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+#loginForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  width: 100%;
+  min-width: 300px;
+  min-height: 300px;
+  max-height: 500px;
+  box-sizing: border-box;
+  justify-content: center;
+  margin: 0 auto;
+  text-align: center;
+}
+
+#registerForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  width: 100%;
+  min-width: 300px;
+  min-height: 300px;
+  max-height: 500px;
+  box-sizing: border-box;
+  justify-content: center;
+  margin: 0 auto;
+  text-align: center;
+}
+
+#updateUserFormContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  width: 100%;
+  min-width: 300px;
+  min-height: 300px;
+  max-height: 500px;
+  box-sizing: border-box;
+  justify-content: center;
+  margin: 0 auto;
+  text-align: center;
+}
+
+#editTagFormContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 40px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 400px;
+  box-sizing: border-box;
+  justify-content: space-between;
+  margin: 0 auto;
+  text-align: center;
+}
+
+#createTagFormContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 40px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 400px;
+  box-sizing: border-box;
+  justify-content: space-between;
+  margin: 0 auto;
+  text-align: center;
+}
+
+#description {
+  width: 80%;
+  height: 80px;
+  overflow-y: scroll;
+}
+
+h2 {
+  font-family: Arial, sans-serif;
+  font-size: 26px;
+  font-weight: normal;
+  margin-bottom: 20px;
+  margin-top: 0px;
+}
+
+.file-input-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+#pictureInput {
+  width: auto;
+  text-align: right;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+label {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+input[type="text"], input[type="password"] {
+  padding: 0.375rem 0.75rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  width: 80%;
+  margin-bottom: 20px;
+}
+
+input[type="text"], input[type="email"], input[type="password"] {
+  padding: 0.375rem 0.75rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  width: 80%;
+  margin-bottom: 20px;
+}
+
+.logo {
+  max-width: 100px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+button[type="submit"], #logoutBtn, #registerBtn {
+  background-color: #a29bfe;
+  border-color: #a29bfe;
+  color: white;
+  width: 80%;
+}
+
+button[type="submit"]:hover, #logoutBtn:hover, #registerBtn:hover {
+  background-color: #6c5ce7;
+}
+
+#logoutSection {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+#message {
+  margin-top: 20px;
+  font-size: 14px;
+  color: red;
+}
+
+/* Optional: Style the Profile Section */
+#meSection {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
 #keywordList {
   width: 200px;
-  height: 400px;
+  height: 80px;
   overflow-y: auto;
   border: 1px solid #000;
 }
+
+#keywordInput {
+  margin-bottom: 5px;
+}
+
+#keywordsContainer{
+  width: 200px;
+  height: 150px;
+  overflow-y: auto;
+  border: 1px solid #000;
+  padding: 10px;
+}
+
+.keyword-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.keyword-item label {
+  margin-left: 10px;
+}
+
+#addKeywordBtn {
+  margin-top: 0;
+  width: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  font-size: 16px;
+  margin: 0 auto;
+}
+
+#captureBtn {
+  margin-top: 0;
+  width: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  font-size: 16px;
+}
+
 #titleList {
   display: flex;
   flex-direction: column;
@@ -22,6 +285,7 @@ body {
   overflow-y: auto;
   border: 1px solid #000;
 }
+
 .tile {
   display: flex;
   align-items: flex-start;
@@ -33,31 +297,70 @@ body {
   padding: 10px;
   transition: background-color 0.3s ease;
 }
+
 .tile:hover {
   background-color: #f0f0f0;
 }
+
 .tile img {
   width: 100px;
   height: 100px;
   object-fit: cover;
   border-radius: 8px;
 }
+
 .tile-content {
   display: flex;
   flex-direction: column;
-  margin-left: 20px; /* Added margin to create space between image and content */
+  margin-left: 20px;
 }
+
 .tile h4 {
   margin: 0;
   font-size: 18px;
   color: #333;
 }
+
 .tile p {
-  margin-top: 5px; /* Added margin to create space between title and description */
+  margin-top: 5px;
   font-size: 14px;
   color: #666;
 }
+
 button {
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 80%;
+  max-width: 200px;
+  background-color: #a29bfe !important;
+  border-color: #a29bfe !important;
+  color: #fff;
   margin-top: 20px;
-  display: block;
+  margin-bottom: 10px;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.small-button {
+  width: 45%;
+  padding: 5px 10px;
+  font-size: 14px;
+  background-color: #a29bfe;
+  color: white;
+  border: none;
+  cursor: pointer;
+  height: auto;
+  vertical-align: baseline;
+}
+
+.small-button:hover {
+  background-color: #6c5ce7;
 }

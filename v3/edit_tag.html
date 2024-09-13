@@ -4,63 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Tag</title>
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin: 20px;
-        }
-        .button {
-            padding: 5px 10px;
-            margin: 5px;
-            width: 50px;
-        }
-        input[type="text"], textarea {
-            width: 300px;
-            padding: 5px;
-        }
-        #keywordList {
-            width: 200px;
-            height: 150px;
-            overflow-y: auto;
-            border: 1px solid #000;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h2>Edit Tag</h2>
-    
-    <!-- Add this inside the body, just below the title -->
-    <!-- Add this just above the title input in the form -->
-    <label for="urlLabel">URL:</label>
-    <div id="urlLabel"></div>
+    <div id="editTagFormContainer" class="container">
+        <div class="column left-column">
+            <h2>Edit Tag</h2>
 
-    <!-- Rest of the form -->
-    <label for="title">Title:</label>
-    <input type="text" id="title" name="title">
+            <label for="urlLabel">URL:</label>
+            <div id="urlLabel"></div>
 
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" class="form-control">
 
-    <label for="description">Description:</label>
-    <textarea id="description" name="description"></textarea>
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" class="form-control"></textarea>
+            
+            <label for="keywords">Keywords:</label>
+            <div id="keywordList">
+                <!-- List of keywords will be dynamically populated here -->
+            </div>
+            <input type="text" id="keywordInput" name="keyword" class="form-control">
+            <button id="addKeywordBtn" class="button">+</button>
+        </div>
 
-    <label for="keywords">Keywords:</label>
-    <div id="keywordList">
-        <!-- List of keywords will be dynamically populated here -->
+        <div class="column right-column">
+            <div class="file-input-container">
+                <label for="picture">Picture:</label>
+                <input type="file" id="pictureInput" accept="image/*" class="form-control">
+            </div>
+
+            <div>
+                <button id="saveBtn" class="button">OK</button>
+                <button id="cancelBtn" class="button">Cancel</button>
+            </div>
+        </div>
     </div>
-    <input type="text" id="keywordInput" name="keyword">
-    <button id="addKeywordBtn" class="button">+</button>
-
-
-
-    <label for="picture">Picture:</label>
-    <input type="file" id="pictureInput" accept="image/*">
-
-    <div>
-        <button id="saveBtn">OK</button>
-        <button id="cancelBtn">Cancel</button>
-    </div>
-
     <script src="edit_tag.js"></script>
 </body>
 </html>
