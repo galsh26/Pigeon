@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from typing import List
 
 
 class DbOperationFailedException(Exception):
@@ -35,7 +36,10 @@ class BaseDbConnector:
         pass
 
     @abstractmethod
-    def update_tag(self, uid: str, url: str, n_title: str, img: bytes, description: str):
+    def update_tag(self, uid: str, url: str, n_title: str, keywords: List[str], img: bytes, description: str):
+        pass
+    @abstractmethod
+    def update_tag2(self, uid: str, url: str, n_title: str, img: bytes, description: str):
         pass
 
     @abstractmethod

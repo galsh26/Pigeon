@@ -120,12 +120,20 @@ class MongoDbConnector(BaseDbConnector):
             pass
         print(f"Updating user from {self.db_name} MongoDB")
         try:
-            update_res: UpdateResult = self.db["users"].update_one({"_id": email},
-                                                                   {"$set": {"uname": n_uname, "hash_pass": n_password}})
-            print(update_res)
-            # check if update was successful
-            if update_res.matched_count == 0:
-                return f"Failed to remove user {email}."
+            if n_uname:
+                update_res: UpdateResult = self.db["users"].update_one({"_id": email},
+                                                                       {"$set": {"uname": n_uname, "hash_pass": n_password}})
+                print(update_res)
+                # check if update was successful
+                if update_res.matched_count == 0:
+                    return f"Failed to remove user {email}."
+            else:
+                update_res: UpdateResult = self.db["users"].update_one({"_id": email},
+                                                                       {"$set": {"hash_pass": n_password}})
+                print(update_res)
+                # check if update was successful
+                if update_res.matched_count == 0:
+                    return f"Failed to remove user {email}."
         except Exception as e:
             print(e)
             return False
@@ -241,7 +249,32 @@ class MongoDbConnector(BaseDbConnector):
             print(e)
             return
 
-    def update_tag(self, uid: str, url: str, n_title: str, img: bytes, description: str):
+    def update_tag(self, uid: str, url: str, n_title: str, keywords: List[str], img: bytes, description: str):
+        try:
+            res: list = list(self.db["taggings"].find({"uid": uid, "url": url}))
+            if len(res) == 0:
+                return "Tag not found."
+            if not img:
+                img = res[0]["picture"]
+        except Exception as e:
+            print(e)
+            return False
+        print(f"Updating tag in {self.db_name} MongoDB")
+        try:
+            update_res: UpdateResult = self.db["taggings"].update_one(
+                {"uid": uid, "url": url},
+                {"$set": {"title": n_title, "keywords": keywords, "description": description, "picture": img}}
+            )
+            print(update_res)
+            # check if update was successful
+            if update_res.matched_count == 0:
+                return f"Failed to update tag."
+        except Exception as e:
+            print(e)
+            return False
+        return "Tag was updated!"
+
+    def update_tag2(self, uid: str, url: str, n_title: str, img: bytes, description: str):
         try:
             res: list = list(self.db["taggings"].find({"uid": uid, "url": url}))
             if len(res) == 0:

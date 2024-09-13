@@ -118,6 +118,15 @@ async def register(email: str = Form(...), uname: str = Form(...), password: str
     return {"message": "User created successfully"}
 
 
+@app.get("/user")
+async def get_user(uid: str = Depends(verify_token)):
+    user = monConnector.get_user(uid)
+    if user is None:
+        return "User not found."
+    return {
+        "email": user["_id"],
+        "uname": user["uname"]
+    }
 @app.delete("/user")
 async def delete_user(form_data: OAuth2PasswordRequestForm = Depends()):
     email = form_data.username
@@ -125,19 +134,21 @@ async def delete_user(form_data: OAuth2PasswordRequestForm = Depends()):
     monConnector.remove_user(email, password)
     return "User id: " + email + " successfully removed."
 
-
+# NOW WORKING!
 @app.put("/user")
 async def update_user(
-        form_data: OAuth2PasswordRequestForm = Depends(),
-        cur_password: str = None,
-        n_uname: str = None,
-        n_password: str = None
+        uid: str = Depends(verify_token),
+        cur_password: str = Form(None),
+        n_uname: str = Form(None),
+        n_password: str = Form(None)
 ):
-    user = monConnector.get_user(form_data.username)
+    user = monConnector.get_user(uid)
     if user is None:
         return "User not found."
     if not auth.verify_password(cur_password, user["hash_pass"]):
         return "Wrong password."
+    # get current user data
+    form_data = User(username=uid, password=cur_password)
     email = form_data.username
     password = form_data.password
     n_password = get_password_hash(n_password)
@@ -171,20 +182,22 @@ async def create_tag(
 
 
 @app.put("/tag")
-# async def update_tag(uid: str = None, url: str = None, title: str = None,
-#                     picture: UploadFile = File(...), description: str = None):
 async def update_tag(
     uid: str = Depends(verify_token),
     url: Optional[str] = Form(None),
     title: Optional[str] = Form(None),
-    # keywords: Optional[str] = Form(None),
-    picture: UploadFile = File(...),
+    keywords: Optional[str] = Form(None),
+    picture: Optional[UploadFile] = File(None),  # Make picture optional
     description: Optional[str] = Form(None)
 ):
+    keywords = keywords.split(',') if keywords else []
+    keywords = [keyword.strip() for keyword in keywords]
     url = url_normalize(url)
-    pic = await picture.read()
-    monConnector.update_tag(uid, url, title, pic, description)
-    return "Tag successfully updated."
+
+    pic_data = await picture.read() if picture else None
+
+    monConnector.update_tag(uid, url, title, keywords, pic_data, description)
+    return {"message": "Tag successfully updated."}
 
 
 @app.get("/user-all-tags")
@@ -330,6 +343,8 @@ async def recommend_by_url_non_user_related(url: str = None, num: int = 5):
 
 @app.get("/generate-keywords-for-url")
 async def generate_keywords_for_url(url: str = None, num: int = 5):
+    # get tab title for url
+
     res = Recommendation.generate_keywords_for_url(url, num)
     # res2 = Recommendation.extract_topics(url, num)
     # set res2 at the beginning of res["keywords"] and remove duplicates
@@ -338,7 +353,7 @@ async def generate_keywords_for_url(url: str = None, num: int = 5):
 
 
 @app.get("/generate-summarize-for-url")
-async def generate_summarize_for_website(url: str = None, sentences_num:int = 1):
+async def generate_summarize_for_website(url: str = None, sentences_num: int = 1):
     res = Recommendation.gen_url_sum(url, sentences_num)
     res = res.strip()
     return {"summary": res}

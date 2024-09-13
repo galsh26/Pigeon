@@ -8,6 +8,10 @@ import re
 
 
 def url_normalize(url):
+    return url
+
+
+def url_normalize2(url):
     # Check if the URL starts with 'http://'
     if url.startswith('http://'):
         # Remove 'http://'

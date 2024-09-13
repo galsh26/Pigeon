@@ -23,6 +23,7 @@ stop_words = list(nlp.Defaults.stop_words | {"menu", "saved"})
 
 summarizer = pipeline('summarization',  model='t5-base')
 
+
 # Function to fetch the HTML content of the webpage
 def fetch_html(url):
     headers = {
@@ -32,7 +33,8 @@ def fetch_html(url):
     try:
         response = requests.get(url, headers=headers)
         response.raise_for_status()
-        return response.text
+        soup = BeautifulSoup(response.text, 'html.parser')
+        return soup.title.string, response.text
     except requests.RequestException as e:
         print("Error fetching HTML:", e)
         return None
@@ -40,7 +42,7 @@ def fetch_html(url):
 
 # New method that extracts the main content
 def extract_main_content_from_url(url):
-    html_content = fetch_html(url)
+    html_title, html_content = fetch_html(url)
     if html_content:
         try:
             # Use readability-lxml to extract the main content
@@ -51,7 +53,7 @@ def extract_main_content_from_url(url):
             soup = BeautifulSoup(main_content_html, "lxml")
 
             # Return a prettified version of the main content
-            return soup.prettify()
+            return html_title, soup.prettify()
 
         except Exception as e:
             print("Error extracting main content:", e)
@@ -104,17 +106,24 @@ def extract_keywords_spacy(text, num_keywords=5):
 
 
 def get_keywords_for_url(url: str, num: int = 5):
-    html_content = extract_main_content_from_url(url)
+    html_title, html_content = extract_main_content_from_url(url)
+    html_title = str(html_title)
     if html_content:
         soup = BeautifulSoup(html_content, "html.parser")
-        text = soup.get_text()
+        # text = soup.get_text()
+        ext = gen_url_sum(url)
 
         keywords_spacy = extract_keywords_spacy(text, num)
         keywords_tfidf = extract_keywords_tfidf(text, num)
 
         # Combine results from both methods, ensuring no duplicates and applying length filter
         combined_keywords = list(set(keywords_spacy).union(set(keywords_tfidf)))
-
+        '''
+        title_kw_spacy = extract_keywords_spacy(html_title, 2)
+        title_kw_tfidf = extract_keywords_tfidf(html_title, 2)
+        
+        combined_keywords += list(set(title_kw_spacy).union(set(title_kw_tfidf)))
+        '''
         return {"keywords": combined_keywords}
     else:
         return {"keywords": []}
@@ -166,7 +175,9 @@ def get_website_summary(url, maxlen=100, minlen=30):
         summary = ' '.join(sentences[:3])  # Limit to 3 sentences
         if len(summary.strip()) == 0 or len(sentences) < 3:
             try:
-                summary = summarizer(text, max_length=maxlen, min_length=minlen, do_sample=False)[0]['summary_text']
+                pass
+                # TODO: Takes too long to run
+                # summary = summarizer(text, max_length=maxlen, min_length=minlen, do_sample=False)[0]['summary_text']
             except Exception as e:
                 summary = "No summary available. Error: " + str(e)
         return summary if summary else "No summary available."
