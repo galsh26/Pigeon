@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (response.ok) {
                 document.getElementById('message').textContent = 'Registration successful!';
                 // Optionally redirect to login page
-                // window.location.href = 'login.html';
+                window.location.href = 'login.html';
             } else {
                 const errorData = await response.json();
                 document.getElementById('message').textContent = 'Registration failed: ' + errorData.detail;

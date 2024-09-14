@@ -196,6 +196,6 @@ document.addEventListener("DOMContentLoaded", function() {
     // Handle "Cancel" button click
     cancelBtn.addEventListener('click', function() {
         // return to previous page
-        window.history.back();
+        window.location.href = 'main_page.html';  // Redirect to main page
     });
 });

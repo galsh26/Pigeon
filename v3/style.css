@@ -8,7 +8,8 @@ body {
 
 .container {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
   gap: 20px;
   width: 100%;
   max-width: 1200px;
@@ -47,6 +48,38 @@ body {
   width: 400px;
   margin: 0 auto;
   text-align: center;
+}
+
+.container-horizontal {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.row {
+  float: left;
+  width: 48%;
+}
+
+.up-row {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  margin-top: 0;
+}
+
+.down-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 20px;
+  align-items: center;
+  margin-top: 0;
 }
 
 #loginForm {
@@ -140,9 +173,9 @@ body {
 
 h2 {
   font-family: Arial, sans-serif;
-  font-size: 26px;
+  font-size: 22px;
   font-weight: normal;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   margin-top: 0px;
 }
 
@@ -227,6 +260,13 @@ button[type="submit"]:hover, #logoutBtn:hover, #registerBtn:hover {
 }
 
 #keywordList {
+  width: 200px;
+  height: 80px;
+  overflow-y: auto;
+  border: 1px solid #000;
+}
+
+#titlesList {
   width: 200px;
   height: 80px;
   overflow-y: auto;
@@ -349,6 +389,10 @@ button {
   margin-bottom: 10px;
 }
 
+#editUserButton:hover {
+  background-color: #0056b3;
+}
+
 .small-button {
   width: 45%;
   padding: 5px 10px;
@@ -363,4 +407,33 @@ button {
 
 .small-button:hover {
   background-color: #6c5ce7;
+}
+
+#greeting {
+  background-color: #007BFF;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 300px;
+  height: min-content;
+  display: inline-block;
+}
+
+.editUserButton {
+  width: auto;
+  padding: 10px 20px;
+  background-color: #007BFF !important;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  display: block;
+  margin: 10px;
 }

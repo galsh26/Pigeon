@@ -8,6 +8,11 @@ document.addEventListener("DOMContentLoaded", function() {
     const pictureInput = document.getElementById('pictureInput');
     const urlLabel = document.getElementById('urlLabel');  // To display the URL
 
+    const backToMainBtn = document.getElementById('backToMainBtn');
+    backToMainBtn.addEventListener('click', function() {
+        window.location.href = 'main_page.html';  // Redirect to main page
+    });
+
     let currentKeywords = [];
 
     // Display the URL in the label

@@ -87,16 +87,13 @@ function fetchTagTitles() {
             const buttonGroup = document.createElement('div');
             buttonGroup.classList.add('button-group');
 
-            // Add Buttons
-            const discoverBtn = document.createElement('button');
-            discoverBtn.textContent = 'Discover';
-            discoverBtn.addEventListener('click', function() {
+            const discoverButton = document.getElementById('discoverButton');
+            document.getElementById('discoverButton').addEventListener('click', function () {
                 window.location.href = `recs_for_website.html?url=${tag.url}`;
             });
 
-            const editBtn = document.createElement('button');
-            editBtn.textContent = 'Edit';
-            editBtn.addEventListener('click', function() {
+            const editButton = document.getElementById('editButton');
+            document.getElementById('editButton').addEventListener('click', function () {
                 window.location.href = `edit_tag.html?url=${tag.url}`;
             });
 
@@ -106,18 +103,11 @@ function fetchTagTitles() {
                 updateTag(tag.url);
             });
 
-            // Add Delete Button
-            const deleteBtn = document.createElement('button');
-            deleteBtn.textContent = 'Delete';
-            deleteBtn.addEventListener('click', function() {
-                showConfirmationPopup(tag.url);
-            });
-
             // Append buttons to the button group
-            buttonGroup.appendChild(discoverBtn);
-            buttonGroup.appendChild(editBtn);
-            buttonGroup.appendChild(okBtn);
-            buttonGroup.appendChild(deleteBtn); // Add the delete button
+            buttonGroup.appendChild(discoverButton);
+            buttonGroup.appendChild(editButton);
+            buttonGroup.appendChild(okButton);
+            buttonGroup.appendChild(logoutBtn);
 
             // Append button group to the tile
             contentDiv.appendChild(buttonGroup);
