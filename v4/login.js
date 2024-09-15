@@ -137,7 +137,7 @@ document.getElementById('getProfileBtn').addEventListener('click', async functio
 
 // Placeholder register button functionality
 document.getElementById('registerBtn').addEventListener('click', function () {
-    alert('Register functionality coming soon!');
+    // alert('Register functionality coming soon!');
     window.location.href = 'register.html';
 });
 

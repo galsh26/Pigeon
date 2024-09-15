@@ -148,7 +148,7 @@
 
         <!-- Lower Container -->
         <div class="lower-container">
-            <!-- Left Column -->
+            <!-- Left Col -->
             <div class="left-column">        
                 <div>
                     <label for="tagName">Title:</label>
@@ -168,12 +168,17 @@
                 </div>
             </div>
 
-            <!-- Right Column -->
+            <!-- Right Col -->
             <div class="right-column">
                 <h3>Keywords</h3>
                 <div id="keywordsContainer"></div>
                 <div id="loadingKeywords" style="display:none;">Loading keywords...</div>
                 
+                <div style="display: flex; gap: 10px;">
+                    <button id="checkAllBtn">Check All</button>
+                    <button id="uncheckAllBtn">Uncheck All</button>
+                </div>
+
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <input type="text" id="newKeyword" placeholder="Add new keyword">
                     <button id="addKeywordBtn">+</button>

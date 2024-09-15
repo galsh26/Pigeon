@@ -311,6 +311,13 @@ function uncheckAllKeywords() {
     fetchKeywords();
 }
 
-// Event listener for the Uncheck All button
 document.getElementById('uncheckAllButton').addEventListener('click', uncheckAllKeywords);
+
+document.getElementById('discoverBtn').addEventListener('click', function () {
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        const currentUrl = tabs[0].url;
+        window.location.href = `rec_cur.html?url=${encodeURIComponent(currentUrl)}`;
+    });
+});
+
 

@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
+    //init
     const captureBtn = document.getElementById('captureBtn');
     const screenshotImg = document.getElementById('screenshot');
     const currentUrlElement = document.getElementById('currentUrl');
@@ -14,7 +15,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const loadingDescription = document.getElementById('loadingDescription');
     const loadingKeywords = document.getElementById('loadingKeywords');
   
-    // Get the accessToken from localStorage (or sessionStorage, depending on where it's stored)
     const accessToken = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
   
     if (!accessToken) {
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function() {
         currentUrlElement.textContent = currentUrl;
         tagName.value = tabTitle;
   
-        // Fetch description from server based on the URL
+        // Get description from server based on the URL
         loadingDescription.style.display = 'block'; // Show loading
         fetch(`http://127.0.0.1:8000/generate-summarize-for-url?url=${encodeURIComponent(currentUrl)}`, {
             headers: {
@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function() {
         })
           .then(response => response.json())
           .then(data => {
-              loadingDescription.style.display = 'none'; // Hide loading
+              loadingDescription.style.display = 'none';
               if (data && data.summary) {
                   description.value = data.summary;
               } else {
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function() {
           .catch(error => {
               console.error("Error fetching description:", error);
               description.value = "Error fetching description.";
-              loadingDescription.style.display = 'none'; // Hide loading even on error
+              loadingDescription.style.display = 'none';
           });
   
         // Fetch keywords from server based on the URL
@@ -63,8 +63,8 @@ document.addEventListener("DOMContentLoaded", function() {
         })
             .then(response => response.json())
             .then(data => {
-                loadingKeywords.style.display = 'none'; // Hide loading
-                keywordsContainer.innerHTML = ''; // Clear existing options
+                loadingKeywords.style.display = 'none';
+                keywordsContainer.innerHTML = ''; 
                 data.forEach(keyword => {
                     const keywordItem = document.createElement('div');
                     keywordItem.classList.add('keyword-item');
@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const selectedKeywords = Array.from(keywordsContainer.querySelectorAll('input[type="checkbox"]:checked'))
             .map(checkbox => checkbox.value);
   
-        // Create a new FormData object to handle both form fields and file upload
+        // Create form data with all the fields
         const formData = new FormData();
         formData.append('url', url);
         formData.append('title', tagNameValue);
@@ -186,3 +186,20 @@ document.addEventListener("DOMContentLoaded", function() {
         window.location.href = 'main_page.html';
     });
 });
+
+// Add references for the check/uncheck buttons
+const checkAllBtn = document.getElementById('checkAllBtn');
+const uncheckAllBtn = document.getElementById('uncheckAllBtn');
+
+// Event listener for "Check All" button
+checkAllBtn.addEventListener('click', function() {
+    const checkboxes = keywordsContainer.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => checkbox.checked = true);
+});
+
+// Event listener for "Uncheck All" button
+uncheckAllBtn.addEventListener('click', function() {
+    const checkboxes = keywordsContainer.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => checkbox.checked = false);
+});
+

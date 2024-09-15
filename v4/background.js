@@ -36,3 +36,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       window.close();
   }
 });
+
+chrome.action.onClicked.addListener((tab) => {
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    const activeTab = tabs[0];
+    const currentUrl = activeTab.url;
+
+    // Send message to content script to update the URL
+    chrome.storage.local.set({ currentUrl });
+  });
+});
+
