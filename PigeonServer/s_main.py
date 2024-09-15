@@ -75,7 +75,9 @@ def verify_token(token: str = Depends(oauth2_scheme)):
 
 @app.get("/users/me")
 async def read_users_me(username: str = Depends(verify_token)):
-    return {"username": username}
+    res = monConnector.get_user(username)
+    res = res["uname"]
+    return {"username": res}
 
 
 @app.post("/token")
@@ -381,6 +383,24 @@ async def generate_summarize_for_website(url: str = None, sentences_num: int = 1
     res = res.strip()
     return {"summary": res}
 
+
+@app.get("/recommendation-for-current-url")
+async def recommendation_for_current_url(uid: str = Depends(verify_token), url: str = None, num: int = 10):
+    kw = Recommendation.generate_keywords_for_url(url, num + 1)
+    res = Recommendation.get_recommendations_by_keywords(kw, num)
+    # if has the same url, remove it
+    res = list(filter(lambda x: x["url"] != url, res))
+    dtr = []
+    for r in res:
+        dtr.append({
+            "uid": r["uid"],
+            "url": r["url"],
+            "title": r["title"],
+            "keywords": r["keywords"],
+            "picture": r["picture"],
+            "description": r["description"]
+        })
+    return dtr
 
 # endregion
 
