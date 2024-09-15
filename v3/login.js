@@ -12,9 +12,6 @@ function showMessage(message, isError = false) {
 function saveToken(token) {
     accessToken = token;
     localStorage.setItem('accessToken', token);
-    document.getElementById('loginForm').style.display = 'none';
-    document.getElementById('logoutSection').style.display = 'block';
-    document.getElementById('meSection').style.display = 'block';
     // Redirect to the main page within the iframe
     window.parent.postMessage('loadMainPage', '*');
 }
@@ -60,7 +57,6 @@ document.getElementById('login').addEventListener('submit', async function (e) {
 
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
-    const rememberMe = document.getElementById('remamber-me').value
 
     const formData = new URLSearchParams();
     formData.append('username', username);
@@ -77,14 +73,7 @@ document.getElementById('login').addEventListener('submit', async function (e) {
         if (response.ok) {
             const data = await response.json();
             saveToken(data.access_token);
-            // Save session based on Remember Me checkbox
-            if (rememberMe) {
-                sessionStorage.setItem('isLoggedIn', 'true');
-            } else {
-                sessionStorage.removeItem('isLoggedIn');
-            }
             showMessage('Logged in successfully!');
-            window.location.href = 'main_page.html';
         } else {
             showMessage('Login failed', true);
         }
@@ -93,16 +82,6 @@ document.getElementById('login').addEventListener('submit', async function (e) {
         showMessage('Login failed: ' + error.message, true);
     }
 });
-
-function checkLoginStatus() {
-    const isLoggedIn = sessionStorage.getItem('isLoggedIn');
-    if (isLoggedIn === 'true') {
-        window.location.href = 'main_page.html';
-    } else {
-        clearToken();
-    }
-}
-window.onload = checkLoginStatus;
 
 // Logout button handler
 document.getElementById('logoutBtn').addEventListener('click', async function () {
@@ -157,6 +136,7 @@ document.getElementById('getProfileBtn').addEventListener('click', async functio
 
 // Placeholder register button functionality
 document.getElementById('registerBtn').addEventListener('click', function () {
+    alert('Register functionality coming soon!');
     window.location.href = 'register.html';
 });
 

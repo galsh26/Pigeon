@@ -4,16 +4,88 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recommendations for Website</title>
-    <link rel="stylesheet" href="style.css">    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            max-width: 600px;
+            margin: 0 auto;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 10px;
+        }
+        .title-tile {
+            background-color: #f0f8ff; /* Different background color for the title tile */
+            font-weight: bold;
+        }
+        .image-container {
+            margin-right: 10px;
+        }
+        img {
+            width: 100px; /* Smaller width */
+            height: 100px; /* Smaller height */
+            border-radius: 10px;
+        }
+        .content {
+            flex-grow: 1;
+        }
+        h2 {
+            font-size: 18px; /* Smaller font size */
+            color: #333;
+        }
+        p {
+            font-size: 14px; /* Smaller font size */
+            color: #666;
+            text-align: justify;
+        }
+        a {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: #007BFF;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        a:hover {
+            background-color: #0056b3;
+        }
+        .content-container {
+            padding-top: 10px;
+        }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #555;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .back-button:hover {
+            background-color: #333;
+        }
+    </style>
 </head>
 <body>
-    <div id="recs_for_website" class="container-vertical">
-        <!-- Back Button -->
-        <button id="btn_back" class="back-button">Back</button>
 
-        <div id="title-tile-container" class="content-container"></div> <!-- Title tile container -->
-        <div id="recommendation-container" class="content-container"></div> <!-- Recommendation tiles container -->
-    </div>
-    <script src="recs_for_website.js"></script>   
+    <!-- Back Button -->
+    <button id="btn_back" class="back-button">Back</button>
+
+    <div id="title-tile-container" class="content-container"></div> <!-- Title tile container -->
+    <div id="recommendation-container" class="content-container"></div> <!-- Recommendation tiles container -->
+
+    <script src="recs_for_website.js"></script>
+
+    
 </body>
 </html>

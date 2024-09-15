@@ -13,20 +13,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Loading elements
     const loadingDescription = document.getElementById('loadingDescription');
     const loadingKeywords = document.getElementById('loadingKeywords');
-    const checkAllBtn = document.getElementById('checkAllBtn');
-    const uncheckAllBtn = document.getElementById('uncheckAllBtn');
-
-    // Check all keywords when "Check All" is clicked
-    checkAllBtn.addEventListener('click', function() {
-        const checkboxes = keywordsContainer.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach(checkbox => checkbox.checked = true);
-    });
-
-    // Uncheck all keywords when "Uncheck All" is clicked
-    uncheckAllBtn.addEventListener('click', function() {
-        const checkboxes = keywordsContainer.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach(checkbox => checkbox.checked = false);
-    });
+  
     // Get the accessToken from localStorage (or sessionStorage, depending on where it's stored)
     const accessToken = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
   
@@ -78,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(data => {
                 loadingKeywords.style.display = 'none'; // Hide loading
                 keywordsContainer.innerHTML = ''; // Clear existing options
-                data.keywords.forEach(keyword => {
+                data.forEach(keyword => {
                     const keywordItem = document.createElement('div');
                     keywordItem.classList.add('keyword-item');
                     
@@ -196,6 +183,6 @@ document.addEventListener("DOMContentLoaded", function() {
     // Handle "Cancel" button click
     cancelBtn.addEventListener('click', function() {
         // return to previous page
-        window.location.href = 'main_page.html';  // Redirect to main page
+        window.history.back();
     });
 });

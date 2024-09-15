@@ -1,5 +1,3 @@
-const submitBtn = document.getElementById('submitButton');
-
 // Ensure this runs after the DOM has loaded
 document.addEventListener('DOMContentLoaded', async function () {
 
@@ -26,9 +24,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             const data = await response.json();
             document.getElementById('email').innerText = data.email || 'Unknown';
             document.getElementById('uname').innerText = data.uname || 'Unknown';
-            document.getElementById('submitButton').addEventListener('click', function () {
-                window.location.href = `login_screen.html`;
-            });
+            // alert(`User: ${data.username}, ID: ${data.email}`);
         } else {
             alert('Failed to fetch user details');
             document.getElementById('result').innerText = 'Failed to fetch user details.';

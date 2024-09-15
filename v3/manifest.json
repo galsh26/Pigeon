@@ -3,7 +3,7 @@
   "name": "Pigeon v3",
   "version": "1.0",
   "action": {
-    "default_popup": "login_screen.html"
+    "default_popup": "popup.html"
   },
   "permissions": [
     "activeTab",

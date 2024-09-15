@@ -4,39 +4,168 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Main Page</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+        #keywordList {
+            width: 200px;
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #000;
+        }
+        #titleList {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 600px;
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #000;
+        }
+        .tile {
+            display: flex; /* Align content horizontally */
+            align-items: center;
+            justify-content: flex-start;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            width: 100%; /* Take full width of the container */
+            background-color: #f9f9f9;
+            padding: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .tile:hover {
+            background-color: #f0f0f0;
+        }
+        .tile img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .tile-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-left: 15px;
+            flex-grow: 1; /* Let the content take the remaining space */
+        }
+        .tile h4 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+        .tile p {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+        #editUserButton {
+            width: auto;  /* Automatically size the button based on its content */
+            padding: 10px 20px;  /* Adjust padding for a smaller button */
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            display: block;
+            margin: 10px;  /* Adjust margins to position it better */
+        }
+
+        #editUserButton:hover {
+            background-color: #0056b3;
+        }
+        #greeting {
+            background-color: #007BFF;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 300px; /* Limit the width */
+            height: min-content; /* Automatically adjust height */
+            display: inline-block; /* Shrink to fit the content */
+        }
+
+        .button {
+            padding: 8px 12px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button-group {
+            display: flex;
+            justify-content: flex-start; /* Align buttons to the left */
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .button-group button {
+            padding: 8px 12px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button-group button:hover {
+            background-color: #0056b3;
+        }
+        #dynamicContent {
+            display: none;
+        }
+
+        #searchKeyword {
+            width: 100%;
+            padding: 5px;
+            margin-top: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container-vertical">
-        <div>
-            <div id="greeting"></div>
-            <button id="editUserButton" class="editUserButton">Edit User</button>
-        </div>
+    <div id="greeting"></div>
 
-        <div id="mainContent" class="container">
-            <div class="container-vertical">
-                <!-- Keyword List -->
-                <div>
-                    <h3>Keywords</h3>
-                    <div id="keywordList">
-                        <!-- Checkboxes for keywords will be populated here -->
-                    </div>
+    <div id="mainContent">
+        <button id="editUserButton">Edit User</button>
+        <div class="container">
+            <!-- Keyword List -->
+            <div>
+                <h3>Keywords</h3>
+                <div id="keywordList">
+                    <!-- Checkboxes for keywords will be populated here -->
                 </div>
+                <button id="uncheckAllButton" class="button">Uncheck All</button>
+                <!-- Search input for filtering keywords -->
+                <input type="text" id="searchKeyword" placeholder="Search keyword...">
+            </div>
 
-                <!-- Tagging Titles List -->
+            <!-- Tagging Titles List -->
+            <div>
                 <h3>Tag Titles</h3>
-                <div id="titlesList">
+                <div id="titleList">
                     <!-- Titles connected to selected keywords (thumbnails and descriptions) -->
-                </div>
-                <!-- Buttons -->
-                <div>
-                    <button id="createTagButton" class="small-button">Create New Tag</button>
-                    <button id="discoverButton" class="small-button">Discover</button>
-                    <button id="editButton" class="small-button">Edit Tag</button>
-                    <button id="logoutButton" class="small-button">Logout</button>
                 </div>
             </div>
         </div>
+
+        <!-- Buttons -->
+        <button id="createTagButton">Create New Tag</button>
+        <button id="logoutButton">Logout</button>
     </div>
 
     <!-- This section will hold the dynamically loaded content (e.g., create_tag.html) -->

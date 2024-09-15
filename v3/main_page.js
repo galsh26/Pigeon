@@ -87,13 +87,16 @@ function fetchTagTitles() {
             const buttonGroup = document.createElement('div');
             buttonGroup.classList.add('button-group');
 
-            const discoverButton = document.getElementById('discoverButton');
-            document.getElementById('discoverButton').addEventListener('click', function () {
+            // Add Buttons
+            const discoverBtn = document.createElement('button');
+            discoverBtn.textContent = 'Discover';
+            discoverBtn.addEventListener('click', function() {
                 window.location.href = `recs_for_website.html?url=${tag.url}`;
             });
 
-            const editButton = document.getElementById('editButton');
-            document.getElementById('editButton').addEventListener('click', function () {
+            const editBtn = document.createElement('button');
+            editBtn.textContent = 'Edit';
+            editBtn.addEventListener('click', function() {
                 window.location.href = `edit_tag.html?url=${tag.url}`;
             });
 
@@ -103,11 +106,18 @@ function fetchTagTitles() {
                 updateTag(tag.url);
             });
 
+            // Add Delete Button
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.addEventListener('click', function() {
+                showConfirmationPopup(tag.url);
+            });
+
             // Append buttons to the button group
-            buttonGroup.appendChild(discoverButton);
-            buttonGroup.appendChild(editButton);
-            buttonGroup.appendChild(okButton);
-            buttonGroup.appendChild(logoutBtn);
+            buttonGroup.appendChild(discoverBtn);
+            buttonGroup.appendChild(editBtn);
+            buttonGroup.appendChild(okBtn);
+            buttonGroup.appendChild(deleteBtn); // Add the delete button
 
             // Append button group to the tile
             contentDiv.appendChild(buttonGroup);
@@ -159,6 +169,9 @@ function filterTags() {
     const selectedKeywords = Array.from(document.querySelectorAll('#keywordList input:checked')).map(checkbox => checkbox.value);
     const tiles = document.querySelectorAll('#titleList .tile');
     
+    // Clear the search input when a keyword is selected
+    document.getElementById('searchKeyword').value = '';
+
     // Variable to store keywords from visible tiles
     let remainingKeywords = new Set();
 
@@ -205,17 +218,18 @@ document.getElementById('editUserButton').addEventListener('click', function() {
     window.location.href = 'edit_user.html';  // Navigate to the Edit User page
 });
 
+document.getElementById('searchKeyword').addEventListener('input', searchKeywords);
 
-// Function to update the keyword list based on the remaining tiles
-function updateKeywordList(remainingKeywords) {
+// Updating keyword list to reflect search results
+function updateKeywordList(filteredKeywords) {
     const keywordList = document.getElementById("keywordList");
-    
+
     // Get currently selected keywords
     const selectedKeywords = Array.from(document.querySelectorAll('#keywordList input:checked')).map(checkbox => checkbox.value);
 
     keywordList.innerHTML = '';  // Clear the current list
 
-    remainingKeywords.forEach(keyword => {
+    filteredKeywords.forEach(keyword => {
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.value = keyword;
@@ -263,5 +277,47 @@ function fetchUsername() {
     .catch(error => console.error('Error fetching username:', error));
 }
 
+// Function to handle keyword search and update the list based on input
+function searchKeywords() {
+    const searchInput = document.getElementById('searchKeyword').value.toLowerCase();
+    const keywordList = document.getElementById("keywordList");
+    const allKeywords = Array.from(keywordList.querySelectorAll('input[type="checkbox"]')).map(checkbox => ({
+        keyword: checkbox.value,
+        checked: checkbox.checked
+    }));
 
+    // Filter keywords based on the search input
+    const filteredKeywords = allKeywords.filter(({ keyword, checked }) => {
+        // Always show checked keywords, or those matching the search query
+        return checked || keyword.toLowerCase().includes(searchInput);
+    });
+
+    // Update the keyword list
+    updateKeywordList(filteredKeywords.map(({ keyword }) => keyword));
+}
+
+// Function to uncheck all keyword checkboxes and show all tiles
+function uncheckAllKeywords() {
+    const checkboxes = document.querySelectorAll('#keywordList input[type="checkbox"]');
+    
+    // Uncheck all checkboxes
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+
+    // Clear the search input
+    document.getElementById('searchKeyword').value = '';
+
+    // Show all tiles
+    const tiles = document.querySelectorAll('#titleList .tile');
+    tiles.forEach(tile => {
+        tile.style.display = 'flex';
+    });
+
+    // Reset keyword list to show all keywords
+    fetchKeywords();
+}
+
+// Event listener for the Uncheck All button
+document.getElementById('uncheckAllButton').addEventListener('click', uncheckAllKeywords);
 

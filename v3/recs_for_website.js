@@ -5,8 +5,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     const cancelBtn = document.getElementById('btn_back');
     cancelBtn.addEventListener('click', function() {
-        // return to previous page
-        window.location.href = 'main_page.html';  // Redirect to main page
+        goBack();
     });
 
     // Check if URL is provided
@@ -102,9 +101,3 @@ document.addEventListener('DOMContentLoaded', async function() {
 function goBack() {
     window.history.back();
 }
-
-// Handle "Cancel" button click
-cancelBtn.addEventListener('click', function() {
-    // return to previous page
-    window.location.href = 'main_page.html';  // Redirect to main page
-});
