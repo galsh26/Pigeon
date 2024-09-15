@@ -1,6 +1,9 @@
 # Pigeon
 Final Project 2024- Amiram and Gal
 
+Server side: starting point at s_main.py
+Client side: chrome://extensions -> Load unpacked -> v4 folder.
+
 website_keyword_extractor:
 You need to run on your cmd the following lines:
 pip install requests
