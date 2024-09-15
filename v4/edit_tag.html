@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Tag</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px;
+            width: 750px;
+            height: 500px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            width: 800px;
+            height: 800px;
+            margin: auto;
+        }
+
+        .upper-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 5px;
+        }
+
+        .lower-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .left-column {
+            width: 48%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-start; /* Align content to the left */
+            text-align: left; /* Optional: Ensure text is left-aligned */
+        }
+
+        .right-column {
+            width: 48%;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .button {
+            padding: 5px 10px;
+            width: auto;
+        }
+
+        input[type="text"], textarea {
+            width: 300px;
+            padding: 5px;
+        }
+
+        input[type="text"] {
+        width: 100%;
+        padding: 5px;
+        margin-bottom: 5px;
+        }
+
+        #keywordList {
+            width: 100% !important;
+            height: 180px !important;
+            overflow-y: auto !important;
+            border: 1px solid #000 !important;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+            margin-top: 5px;
+            width: 100%;
+        }
+
+        #addKeywordBtn {
+        margin: 5px 0;
+        }
+    </style>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Upper Container -->
+        <div class="upper-container">
+            <h2>Edit Tag</h2>
+            <label for="urlLabel">URL:</label>
+            <div id="urlLabel"></div>
+        </div>
+
+         <!-- Lower Container -->
+         <div class="lower-container">
+            <!-- Left Column -->
+            <div class="left-column"> 
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title">
+
+                <label for="description">Description:</label>
+                <textarea id="description" name="description"></textarea>
+
+                <label for="picture">Picture:</label>
+                <input type="file" id="pictureInput" accept="image/*">
+
+                <div class="button-group">
+                    <button id="saveBtn">OK</button>
+                    <button id="cancelBtn">Cancel</button>
+                </div>
+            </div>
+
+             <!-- Right Column -->
+             <div class="right-column">
+
+                <label for="keywords">Keywords:</label>
+                <div id="keywordList">
+                    <!-- List of keywords will be dynamically populated here -->
+                </div>
+                <input type="text" id="keywordInput" name="keyword">
+                <button id="addKeywordBtn" class="button">+</button>
+            </div>
+         </div>
+    </div>
+    <script src="edit_tag.js"></script>
+</body>
+</html>

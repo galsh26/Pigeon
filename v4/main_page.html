@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+        #createTagButton {
+            width: 160px!important; /* Make the button wider */
+            padding: 0px;
+            background-color: #6c5ce7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+        }
+        #uncheckAllButton {
+            width: 160px!important; /* Make the button wider */
+            padding: 5px!important; /* Add padding to the button */
+            background-color: #6c5ce7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+        }
+        #logoutEditContainer {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            width: 250px; /* Make container wide enough to ensure equal button size */
+        }
+        #keywordList {
+            width: 100%;
+            height: 280px;
+            overflow-y: auto;
+            border: 1px solid #000;
+            margin-bottom: 5px;
+        }
+        #titleList {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 550px;
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #000;
+        }
+        .tile {
+            display: flex; /* Align content horizontally */
+            align-items: center;
+            justify-content: flex-start;
+            border: 1px solid #ccc;
+            border-radius: 0px;
+            background-color: #f9f9f9;
+            padding: 0px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .tile:hover {
+            background-color: #f0f0f0;
+        }
+        .tile img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .tile-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-left: 15px;
+            flex-grow: 1; /* Let the content take the remaining space */
+        }
+        .tile h4 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+        .tile p {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+        #editUserButton, #logoutButton {
+            width: 100px!important;  /* Make both buttons take up equal width */
+            padding: 10px!important; /* Make both buttons take up equal height */
+            height: 45px!important; /* Make both buttons take up equal height */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding-top: 15px!important; /* Center the text vertically */
+            cursor: pointer;
+            text-align: center;
+        }
+
+        #editUserButton {
+            background-color: #6c5ce7;
+        }
+
+        #editUserButton:hover {
+            background-color: #6c5ce7;
+        }
+
+        #logoutButton {
+            background-color: #6c5ce7;
+        }
+
+        #logoutButton:hover {
+            background-color: #6c5ce7;
+        }
+
+        #greeting {
+            color: rgb(0, 0, 0);
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            max-width: 300px; /* Limit the width */
+            height: min-content; /* Automatically adjust height */
+            display: inline-block; /* Shrink to fit the content */
+        }
+
+        .button {
+            padding: 10px 20px;
+            background-color: #6c5ce7;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            height: 45px; /* Ensures consistent height for all buttons */
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        #editUserButton, #logoutButton {
+           width: 100px; /* Set a fixed width for the logout and edit buttons */
+        }
+
+        .button-group button {
+            padding: 10px 20px;
+            background-color: #6c5ce7;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            flex: 1; /* Ensures buttons take equal space */
+            height: 45px; /* Set fixed height for consistency */
+        }
+
+        .button-group button:hover {
+            background-color: #6c5ce7;
+        }
+        #dynamicContent {
+            display: none;
+        }
+
+        #searchKeyword {
+            width: 100%;
+            padding: 5px;
+            margin-top: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+
+        #mainContent {
+            width: 800px;
+            height: 380px;
+            display: flex-start;
+        }
+
+        #logoutButton, #editUserButton {
+            width: 100px;
+            padding: 10px 20px 10px!important;
+            background-color: #6c5ce7!important;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            display: block;
+            margin: 5px;
+            bottom: 20px;
+        }
+
+        button[type="create"], button[type="logout"], #logoutButton, #editUserButton {
+            width: 20%;
+            padding: 10px 20px;
+            background-color: #6c5ce7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            display: block;
+            margin: 5px;
+            bottom: 20px;
+        }
+
+
+    </style>
+</head>
+<body>
+    
+    <!-- New container for logout and edit user buttons in the top right corner -->
+    <div id="logoutEditContainer">
+        <button id="editUserButton">Edit User</button>
+        <button id="logoutButton">Logout</button>
+    </div>
+
+    <div id="mainContent">
+        <div id="greeting"></div>
+        <div class="container">
+            <!-- Keyword List -->
+            <div>
+                <h3>Keywords</h3>
+                <div id="keywordList">
+                    <!-- Checkboxes for keywords will be populated here -->
+                </div>
+                <!-- Search input for filtering keywords -->
+                <input type="text" id="searchKeyword" placeholder="Search keyword...">
+                <div>
+                    <div id="buttonContainer" class="button-group">
+                        <button id="uncheckAllButton" class="button">Uncheck All</button>
+                    </div>
+                    <div id="buttonContainer" class="button-group">
+                        <button type="create" class="button" id="createTagButton">Create Tag</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tagging Titles List -->
+            <div>
+                <h3>Tag Titles</h3>
+                <div id="titleList">
+                    <!-- Titles connected to selected keywords (thumbnails and descriptions) -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+    </div>
+
+    <!-- This section will hold the dynamically loaded content (e.g., create_tag.html) -->
+    <div id="dynamicContent" style="display:none;"></div>
+
+    <script src="main_page.js"></script>
+</body>
+</html>
