@@ -6,19 +6,27 @@
     <title>Create Tag</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        body {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px;
+            width: 750px;
+            height: 500px;
+        }
         .container {
             display: flex;
             flex-direction: column;
-            align-items: flex-start; /* Align all elements to the left */
+            align-items: flex-start;
             padding: 20px;
-            max-width: 1000px;
+            width: 800px;
+            height: 800px;
             margin: auto;
         }
 
         .upper-container {
             display: flex;
             flex-direction: column;
-            align-items: flex-start; /* Aligns upper container elements to the left */
+            align-items: flex-start;
             margin-bottom: 20px;
         }
 
@@ -35,6 +43,8 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            align-items: flex-start; /* Align content to the left */
+            text-align: left; /* Optional: Ensure text is left-aligned */
         }
 
         .right-column {
@@ -74,6 +84,8 @@
             height: 60px;
             font-size: 12px;
             padding: 5px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
         }
 
         button {
@@ -99,14 +111,29 @@
             border-radius: 4px;
         }
 
-        h3, h2 {
+        h2 {
+            margin: 10px 0;
+            font-size: 20px;
+        }
+
+        h3 {
             margin: 10px 0;
             font-size: 16px;
         }
 
         .button-group {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        #descriptionArea {
+            width: 100%; /* Take full width of the container */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Align to the start to match other elements */
+            gap: 5px; /* Add some space between the label and textarea */
         }
     </style>
 </head>
@@ -134,7 +161,7 @@
 
                 <button id="captureBtn">Retake Screenshot</button>
 
-                <div>
+                <div id="descriptionArea">
                     <label for="description">Description:</label>
                     <textarea id="description" placeholder="Enter description"></textarea>
                     <div id="loadingDescription" style="display:none;">Loading description...</div>

@@ -100,12 +100,6 @@ function fetchTagTitles() {
                 window.location.href = `edit_tag.html?url=${tag.url}`;
             });
 
-            const okBtn = document.createElement('button');
-            okBtn.textContent = 'OK';
-            okBtn.addEventListener('click', function() {
-                updateTag(tag.url);
-            });
-
             // Add Delete Button
             const deleteBtn = document.createElement('button');
             deleteBtn.textContent = 'Delete';
@@ -116,7 +110,6 @@ function fetchTagTitles() {
             // Append buttons to the button group
             buttonGroup.appendChild(discoverBtn);
             buttonGroup.appendChild(editBtn);
-            buttonGroup.appendChild(okBtn);
             buttonGroup.appendChild(deleteBtn); // Add the delete button
 
             // Append button group to the tile

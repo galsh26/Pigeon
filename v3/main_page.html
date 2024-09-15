@@ -16,16 +16,17 @@
         }
         #keywordList {
             width: 200px;
-            height: 400px;
+            height: 200px;
             overflow-y: auto;
             border: 1px solid #000;
+            margin-bottom: 5px;
         }
         #titleList {
             display: flex;
             flex-direction: column;
             gap: 20px;
-            width: 600px;
-            height: 400px;
+            width: 500px;
+            height: 200px;
             overflow-y: auto;
             border: 1px solid #000;
         }
@@ -85,15 +86,13 @@
             background-color: #0056b3;
         }
         #greeting {
-            background-color: #007BFF;
-            color: white;
-            font-size: 24px;
+            color: rgb(0, 0, 0);
+            font-size: 20px;
             font-weight: bold;
             text-align: center;
             padding: 15px;
             border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-bottom: 5px;
             max-width: 300px; /* Limit the width */
             height: min-content; /* Automatically adjust height */
             display: inline-block; /* Shrink to fit the content */
@@ -109,7 +108,7 @@
         }
         .button-group {
             display: flex;
-            justify-content: flex-start; /* Align buttons to the left */
+            justify-content: flex-start;
             gap: 10px;
             margin-top: 10px;
         }
@@ -135,12 +134,36 @@
             border: 1px solid #ced4da;
             border-radius: 4px;
         }
+
+        #mainContent {
+            width: 800px;
+            height: 380px;
+            display: flex-start;
+        }
+
+        button[type="create"], button[type="logout"], #createTagButton, #logoutButton {
+            width: 20%;
+            padding: 10px 20px;
+            background-color: #a29bfe;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            display: block;
+            margin: 5px;
+        }
+
+        button[type="create"], button[type="logout"]:hover, #logoutBtn:hover, #createTagButton, #logoutButton {
+            background-color: #6c5ce7;
+        }
     </style>
 </head>
 <body>
-    <div id="greeting"></div>
+    
 
     <div id="mainContent">
+        <div id="greeting"></div>
         <button id="editUserButton">Edit User</button>
         <div class="container">
             <!-- Keyword List -->
@@ -164,8 +187,8 @@
         </div>
 
         <!-- Buttons -->
-        <button id="createTagButton">Create New Tag</button>
-        <button id="logoutButton">Logout</button>
+        <button type="create" id="createTagButton">Create New Tag</button>
+        <button type="logout" id="logoutButton">Logout</button>
     </div>
 
     <!-- This section will hold the dynamically loaded content (e.g., create_tag.html) -->

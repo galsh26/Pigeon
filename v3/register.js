@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const registerForm = document.getElementById('register');
+    const backBtn = document.getElementById('backBtn');
     registerForm.addEventListener('submit', async function(event) {
         event.preventDefault();
         
@@ -32,5 +33,10 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error:', error);
             document.getElementById('message').textContent = 'Registration failed: ' + error.message;
         }
+    });
+
+    // Event listener for the Back button
+    backBtn.addEventListener('click', function() {
+        window.location.href = 'login_screen.html';
     });
 });

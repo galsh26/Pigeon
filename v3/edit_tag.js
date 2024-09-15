@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const descriptionInput = document.getElementById('description');
     const pictureInput = document.getElementById('pictureInput');
     const urlLabel = document.getElementById('urlLabel');  // To display the URL
+    const cancelBtn = document.getElementById('cancelBtn');
 
     let currentKeywords = [];
 
@@ -87,11 +88,11 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // Remove selected keyword
-    document.getElementById('removeKeywordBtn').addEventListener('click', () => {
+    /*document.getElementById('removeKeywordBtn').addEventListener('click', () => {
         const selectedKeyword = document.getElementById('keywordInput').value.trim();
         currentKeywords = currentKeywords.filter(keyword => keyword !== selectedKeyword);
         updateKeywordList();
-    });
+    });*/
 
     // Save changes (OK button)
     document.getElementById('saveBtn').addEventListener('click', () => {
@@ -126,6 +127,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Cancel button handler
     document.getElementById('cancelBtn').addEventListener('click', () => {
+        
         window.location.href = 'main_page.html';
     });
 });

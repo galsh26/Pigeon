@@ -1,3 +1,5 @@
+const backBtn = document.getElementById('backBtn');
+
 // Ensure this runs after the DOM has loaded
 document.addEventListener('DOMContentLoaded', async function () {
 
@@ -78,4 +80,10 @@ document.getElementById('updateUserForm').addEventListener('submit', async funct
     } catch (error) {
         document.getElementById('result').innerText = 'Error: ' + error.message;
     }
+});
+
+// Back button handler
+document.getElementById('backBtn').addEventListener('click', () => {
+        
+    window.location.href = 'main_page.html';
 });

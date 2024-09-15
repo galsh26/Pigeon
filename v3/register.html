@@ -10,16 +10,19 @@
     <div id="registerForm">
         <h2>Register</h2>
         <form id="register">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-            
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
+
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
             
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
             
-            <button type="submit">Register</button>
+            <div class="button-group">
+                <button type="button" id="backBtn">Back</button>
+                <button type="submit">Register</button>
+            </div>
         </form>
     </div>
 

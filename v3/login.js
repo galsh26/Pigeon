@@ -73,13 +73,13 @@ document.getElementById('login').addEventListener('submit', async function (e) {
         if (response.ok) {
             const data = await response.json();
             saveToken(data.access_token);
-            showMessage('Logged in successfully!');
+            window.location.href = 'main_page.html';
         } else {
-            showMessage('Login failed', true);
+            alert('Login failed', true);
         }
     } catch (error) {
         console.error('Error:', error);
-        showMessage('Login failed: ' + error.message, true);
+        alert('Login failed: ' + error.message, true);
     }
 });
 
