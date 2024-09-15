@@ -105,13 +105,32 @@ def extract_keywords_spacy(text, num_keywords=5):
     return filter_keywords_by_length(keywords)
 
 
-def get_keywords_for_url(url: str, num: int = 5):
-    html_title, html_content = extract_main_content_from_url(url)
-    html_title = str(html_title)
+def get_keywords_for_url2(url: str, num: int = 5):
+    _, html_content = fetch_html(url)
     if html_content:
         soup = BeautifulSoup(html_content, "html.parser")
+        text = soup.get_text()
+
+        keywords_spacy = extract_keywords_spacy(text, num * 2)
+        keywords_tfidf = extract_keywords_tfidf(text, num * 2)
+
+        # Combine results from both methods, ensuring no duplicates and applying length filter
+        combined_keywords = list(set(keywords_spacy).union(set(keywords_tfidf)))
+
+        return combined_keywords[:num]  # Limit to 5 keywords
+    else:
+        return []
+
+
+def get_keywords_for_url(url: str, num: int = 5):
+    # html_title, html_content = extract_main_content_from_url(url)
+    # html_title = str(html_title)
+    text = summarize_website(url)["summary"]
+    # if html_content:
+    if text:
+        # soup = BeautifulSoup(html_content, "html.parser")
         # text = soup.get_text()
-        ext = gen_url_sum(url)
+        # text = summarize_website(url)
 
         keywords_spacy = extract_keywords_spacy(text, num)
         keywords_tfidf = extract_keywords_tfidf(text, num)
@@ -132,9 +151,10 @@ def get_keywords_for_url(url: str, num: int = 5):
 def summarize_website(url: str = None, num: int = 5):
     if not url:
         return {"summary": ""}
-    html_content = extract_main_content_from_url(url)
+    _, html_content = extract_main_content_from_url(url)
     if html_content:
         soup = BeautifulSoup(html_content, "html.parser")
+
         paragraphs = soup.find_all('p')
         text = ' '.join([para.get_text() for para in paragraphs])
         sentences = sent_tokenize(text)

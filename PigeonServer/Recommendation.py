@@ -76,39 +76,23 @@ def gen_url_sum(url: str, num: int = 1):
     return get_website_summary(url)
 
 
-def extract_topics(url, n_topics=2, n_top_words=10, random_state=0):
-    """
-    Extract topics from a web page's main content using LDA.
+def get_most_similar_user_keywords(
+        url_keywords: list[str],
+        user_keywords: list[str],
+        num: int = 5, threshold: float = 0.30
+):
+    # Check if user_keywords is a list
+    if not isinstance(user_keywords, list):
+        return "Error: user_keywords must be a list."
 
-    Parameters:
-    - url: URL of the web page to extract text from.
-    - n_topics: number of topics to extract (default is 2).
-    - n_top_words: number of top words to display for each topic (default is 10).
-    - random_state: random state for reproducibility (default is 0).
+    # Calculate the similarity between the extracted keywords and each of the user's keywords
+    similarities = [(user_kw, word_vec_similarity(url_keywords, user_kw)) for user_kw in user_keywords]
 
-    Returns:
-    - topics: A list of topics with their top words.
-    """
+    # Filter out the keywords that have a similarity score below the threshold
+    similarities = [(user_kw, sim) for user_kw, sim in similarities if sim >= threshold]
 
-    # Assuming this function extracts and returns the main text from the URL
-    txt = gen_url_sum(url, num=1)
+    # Sort the remaining keywords by their similarity score in descending order
+    similarities.sort(key=lambda x: x[1], reverse=True)
 
-    # Vectorize the input text (convert text to token counts)
-    # Wrap the extracted text in a list to make it iterable
-    vectorizer = CountVectorizer(stop_words='english')
-    X = vectorizer.fit_transform([txt])
-
-    # Fit LDA model to the vectorized text
-    lda = LatentDirichletAllocation(n_components=n_topics, random_state=random_state)
-    lda.fit(X)
-
-    # Get feature names (words)
-    feature_names = vectorizer.get_feature_names_out()
-
-    # Extract and display the topics
-    topics = []
-    for index, topic in enumerate(lda.components_):
-        top_words = [feature_names[i] for i in topic.argsort()[:-n_top_words - 1:-1]]
-        topics.append(f"Topic #{index + 1}: {', '.join(top_words)}")
-
-    return topics
+    # Return the top 'num' keywords
+    return [user_kw for user_kw, sim in similarities[:num]]

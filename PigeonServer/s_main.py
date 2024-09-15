@@ -170,6 +170,11 @@ async def create_tag(
     url = url_normalize(url)
     keywords = keywords.split(',')
     keywords = [keyword.strip() for keyword in keywords]
+    # scan each keyword, if it starts with ' +' or ' >', remove it
+    for kw in keywords:
+        if kw.startswith('+ ') or kw.startswith('> '):
+            keywords.remove(kw)
+            keywords.append(kw[2:])
 
     try:
         data = await picture.read()
@@ -342,10 +347,21 @@ async def recommend_by_url_non_user_related(url: str = None, num: int = 5):
 
 
 @app.get("/generate-keywords-for-url")
-async def generate_keywords_for_url(url: str = None, num: int = 5):
+async def generate_keywords_for_url(uid: str = Depends(verify_token), url: str = None, num: int = 5):
     # get tab title for url
 
-    res = Recommendation.generate_keywords_for_url(url, num)
+    res = Recommendation.generate_keywords_for_url(url, num * 2)["keywords"]
+    # remove any word with only digits in it or 2 or less long words, and remove duplicates
+    # WHY?!
+    # res = list(filter(lambda x: not x.isdigit() and len(x) > 2, res))
+    res2 = Recommendation.get_most_similar_user_keywords(res, monConnector.get_all_user_keywords(uid), 2)
+    # add ' +' to the beginning of each keyword
+    res = list(map(lambda x: "+ " + x, res))
+    # add ' >' to the beginning of each keyword
+    res2 = list(map(lambda x: "> " + x, res2))
+    res = res[:num]
+    print(res2)
+    res = res + res2
     # res2 = Recommendation.extract_topics(url, num)
     # set res2 at the beginning of res["keywords"] and remove duplicates
     # res["keywords"] = list(set(res2 + res["keywords"]))

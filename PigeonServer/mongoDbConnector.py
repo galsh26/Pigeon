@@ -244,6 +244,8 @@ class MongoDbConnector(BaseDbConnector):
             keywords = []
             for r in res:
                 keywords.extend(r["keywords"])
+            # remove duplicates
+            keywords = list(set(keywords))
             return keywords
         except Exception as e:
             print(e)
