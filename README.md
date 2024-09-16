@@ -1,9 +1,11 @@
 
-# README.md
+# Pigeon
 
 ## Project Overview
 
-This project is a **FastAPI**-based web service designed to manage user authentication, URL tagging, and keyword-based content recommendations. It supports CRUD operations for users and tags, alongside providing keyword-based content recommendations by leveraging natural language processing (NLP) techniques and an external database (MongoDB). The system integrates keyword extraction, URL normalization, and recommendation generation for personalized user experiences.
+Pigeon is a **FastAPI**-based web service designed to manage user authentication, URL tagging, and keyword-based content recommendations. It supports CRUD operations for users and tags, alongside providing keyword-based content recommendations by leveraging natural language processing (NLP) techniques and an external database (MongoDB). The system integrates keyword extraction, URL normalization, and recommendation generation for personalized user experiences.
+
+Additionally, the project includes a **Chrome extension** that acts as the client-side of the service.
 
 ---
 
@@ -16,7 +18,8 @@ This project is a **FastAPI**-based web service designed to manage user authenti
    - [Tag Management](#tag-management)
    - [Recommendation System](#recommendation-system)
 4. [Database Setup](#database-setup)
-5. [License](#license)
+5. [Chrome Extension](#chrome-extension)
+6. [License](#license)
 
 ---
 
@@ -54,8 +57,8 @@ This project is a **FastAPI**-based web service designed to manage user authenti
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-repo/project.git
-   cd project
+   git clone https://github.com/your-repo/Pigeon.git
+   cd Pigeon
    ```
 
 2. **Install dependencies:**
@@ -124,7 +127,7 @@ This project is a **FastAPI**-based web service designed to manage user authenti
 
 ## Database Setup
 
-The project uses **MongoDB** as the database. The MongoDB connector (`mongoDbConnector.py`) handles all database operations, including:
+Pigeon uses **MongoDB** as the database. The MongoDB connector (`mongoDbConnector.py`) handles all database operations, including:
 
 - User management (`users` collection)
 - Tagging system (`taggings` collection)
@@ -133,6 +136,20 @@ Ensure MongoDB is properly set up and running. You can modify the connection det
 
 ---
 
+## Chrome Extension
+
+The client-side of the project is implemented as a **Chrome Extension**. To install the extension:
+
+1. Navigate to `chrome://extensions` in your Chrome browser.
+2. Enable "Developer mode" (usually a toggle in the upper-right corner).
+3. Click on "Load unpacked".
+4. Select the `v4` folder from the project directory.
+
+The Chrome extension will then be installed and ready to interact with the FastAPI server.
+
+---
+
 ## License
 
 This project is licensed under the MIT License. Feel free to use, modify, and distribute the code.
+
