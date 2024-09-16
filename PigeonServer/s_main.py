@@ -220,6 +220,7 @@ async def get_all_user_tags(uid: str = Depends(verify_token)):
             "picture": r["picture"],
             "description": r["description"]
         })
+    dtr.reverse()
     return dtr
 
 
